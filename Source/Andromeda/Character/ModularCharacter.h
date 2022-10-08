@@ -36,6 +36,8 @@ public:
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -56,8 +58,6 @@ public:
 	bool UseStamina(float StaminaToUse);
 
 protected:
-	//Automatically set Health to be clamped between 0 and 100
-	void SetHealth(float NewHealth);
 
 	void ApplyRagdoll();
 
@@ -77,6 +77,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
 	float Dexterity = 20;
 
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
-	bool bIsAttacking = false;
+	FORCEINLINE void MoveForward(float Value) { AddMovementInput(GetActorForwardVector(), Value); }
+	FORCEINLINE void MoveRight(float Value) { AddMovementInput(GetActorRightVector(), Value); }
 };

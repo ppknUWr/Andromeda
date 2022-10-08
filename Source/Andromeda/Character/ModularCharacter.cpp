@@ -29,7 +29,7 @@ AModularCharacter::AModularCharacter()
 
 	//// CAMERA
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
-	Camera->SetupAttachment(BodyParts[GetBodyPartIndex(EBodyPart::HEAD)], "head");
+	Camera->SetupAttachment(GetMesh(), "head");
 	Camera->bUsePawnControlRotation = true;
 	Camera->SetFieldOfView(110.f);
 	
@@ -37,12 +37,11 @@ AModularCharacter::AModularCharacter()
 	GetCapsuleComponent()->SetCapsuleRadius(25.f);
 	GetMesh()->SetRelativeLocation(FVector(-20.f, 0.f, -90.f));
 	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
-	GetMesh()->SetCollisionResponseToChannel(ECC_GameTraceChannel2, ECR_Block);
 }
 
 float AModularCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	SetHealth(Health - DamageAmount);
+	Health = FMath::Clamp(Health - DamageAmount, 0.f, MaxHealth);
 
 	if (Health == 0)
 	{
@@ -52,15 +51,21 @@ float AModularCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
+void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	PlayerInputComponent->BindAxis("Move Forward / Backward", this, &AModularCharacter::MoveForward);
+	PlayerInputComponent->BindAxis("Move Right / Left", this, &AModularCharacter::MoveRight);
+
+	PlayerInputComponent->BindAxis("Turn Right / Left Mouse", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &APawn::AddControllerPitchInput);
+}
+
 // Called when the game starts or when spawned
 void AModularCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-}
-
-void AModularCharacter::SetHealth(float NewHealth)
-{
-	Health = FMath::Clamp(NewHealth, 0.f, MaxHealth);
 }
 
 void AModularCharacter::ApplyRagdoll()
@@ -70,7 +75,7 @@ void AModularCharacter::ApplyRagdoll()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetCharacterMovement()->DisableMovement();
 
-	SetLifeSpan(3.f);
+	SetLifeSpan(5.f);
 }
 
 
