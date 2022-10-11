@@ -15,8 +15,6 @@ enum class EBodyPart : uint8
 	LEGS UMETA(DisplayName = "Legs"),
 	FEET UMETA(DisplayName = "Feet"),
 	COUNT UMETA(Hidden)
-//
-	
 };
 
 inline int GetBodyPartIndex(EBodyPart BodyPart)
