@@ -6,9 +6,8 @@
 #include "UObject/NoExportTypes.h"
 #include "Item.generated.h"
 
-/**
- * 
- */
+class UInventoryComponent;
+
 UCLASS(Abstract, BlueprintType, Blueprintable, EditInlineNew, DefaultToInstanced)
 class ANDROMEDA_API UItem : public UObject
 {
@@ -29,10 +28,10 @@ public:
 	FText UseActionText;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
-	class UStaticMesh* PickupMesh;
+	UStaticMesh* PickupMesh;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
-	class UTexture2D* Thumbnail;
+	UTexture2D* Thumbnail;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
 	FText ItemDisplayName;
@@ -44,5 +43,5 @@ public:
 	float Weight;
 
 	UPROPERTY()
-	class UInventoryComponent* OwningInventory;
+	UInventoryComponent* OwningInventory;
 };

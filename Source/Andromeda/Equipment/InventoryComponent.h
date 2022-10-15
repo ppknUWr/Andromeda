@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "InventoryComponent.generated.h"
 
+class UItem;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -19,13 +21,13 @@ public:
 
 	virtual void BeginPlay() override;
 
-	bool AddItem(class UItem* Item);
-	bool RemoveItem(class UItem* Item);
+	bool AddItem(UItem* Item);
+	bool RemoveItem(UItem* Item);
 
 public:
 
 	UPROPERTY(EditDefaultsOnly, Instanced)
-	TArray<class UItem*> DefaultItems;
+	TArray<UItem*> DefaultItems;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Inventory")
 	int32 Capacity;
@@ -34,6 +36,6 @@ public:
 	FOnInventoryUpdated OnInventoryUpdated;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
-	TArray<class UItem*> Items;
+	TArray<UItem*> Items;
 	
 };
