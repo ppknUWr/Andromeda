@@ -36,7 +36,7 @@ public:
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
-protected:
+public:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -45,8 +45,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class UCameraComponent* Camera;
-
-public:
+	
 	//React to hit, based on hit result 's bone name
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void ReactToHit(FName BoneName);
@@ -54,6 +53,9 @@ public:
 	//Return true if Stamina is above 0
 	UFUNCTION(BlueprintCallable)
 	bool UseStamina(float StaminaToUse);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USkeletalMeshComponent* Weapon;
 
 protected:
 
