@@ -25,7 +25,7 @@ struct FCharacterStats
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
 	float MaxHealth = 100;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
-	float Health;
+	float Health = MaxHealth;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
 	float Stamina = 100;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
@@ -55,7 +55,7 @@ public:
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
-protected:
+public:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -64,16 +64,17 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class UCameraComponent* Camera;
-
-public:
+	
 	//React to hit, based on hit result 's bone name
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void ReactToHit(FName BoneName);
 
-	
 	//Return true if Stamina is above 0
 	UFUNCTION(BlueprintCallable)
 	bool UseStamina(float StaminaToUse);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USkeletalMeshComponent* Weapon;
 
 protected:
 
