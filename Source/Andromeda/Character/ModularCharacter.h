@@ -17,11 +17,30 @@ enum class EBodyPart : uint8
 	COUNT UMETA(Hidden)
 };
 
+USTRUCT(BlueprintType)
+struct FCharacterStats
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
+	float MaxHealth = 100;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
+	float Health;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
+	float Stamina = 100;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
+	float Mana = 100;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
+	float Strength = 20;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
+	float Dexterity = 20;
+	
+};
+
 inline int GetBodyPartIndex(EBodyPart BodyPart)
 {
 	return static_cast<int>(BodyPart);
 }
-
 
 UCLASS(Abstract)
 class ANDROMEDA_API AModularCharacter : public ACharacter
@@ -51,6 +70,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void ReactToHit(FName BoneName);
 
+	
 	//Return true if Stamina is above 0
 	UFUNCTION(BlueprintCallable)
 	bool UseStamina(float StaminaToUse);
@@ -60,21 +80,13 @@ protected:
 	void ApplyRagdoll();
 
 public:
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
-	float MaxHealth = 100;
+	FCharacterStats Stats;
 	
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category="Basic Stats")
-	float Health;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
-	float Strength = 20;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
-	float Stamina = 100;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
-	float Dexterity = 20;
-
+	//UFUNCTION(BlueprintCallable)
+	void SetStat(float FCharacterStats::* StatsField, float Value);
+	
 	FORCEINLINE void MoveForward(float Value) { AddMovementInput(GetActorForwardVector(), Value); }
 	FORCEINLINE void MoveRight(float Value) { AddMovementInput(GetActorRightVector(), Value); }
 };
