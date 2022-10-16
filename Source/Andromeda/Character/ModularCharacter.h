@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "CharacterStats.h"
+#include "WeaponExpGain.h"
 #include "ModularCharacter.generated.h"
 
 UENUM(BlueprintType)
@@ -45,8 +47,16 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class UCameraComponent* Camera;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FCharacterStats Stats;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FWeaponExpGain WeaponExpGain;
 
 public:
+	//UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void SetStats(float FCharacterStats::* StatsField, float Value);
+	
 	//React to hit, based on hit result 's bone name
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void ReactToHit(FName BoneName);
@@ -60,21 +70,7 @@ protected:
 	void ApplyRagdoll();
 
 public:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
-	float MaxHealth = 100;
 	
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category="Basic Stats")
-	float Health;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
-	float Strength = 20;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
-	float Stamina = 100;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
-	float Dexterity = 20;
-
 	FORCEINLINE void MoveForward(float Value) { AddMovementInput(GetActorForwardVector(), Value); }
 	FORCEINLINE void MoveRight(float Value) { AddMovementInput(GetActorRightVector(), Value); }
 };

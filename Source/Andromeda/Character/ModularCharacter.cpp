@@ -15,7 +15,7 @@ AModularCharacter::AModularCharacter()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	Health = MaxHealth;
+	Stats.Health = Stats.MaxHealth;
 
 	//// BODY PARTS
 	BodyParts.Init(nullptr, GetBodyPartIndex(EBodyPart::COUNT));
@@ -43,9 +43,9 @@ AModularCharacter::AModularCharacter()
 
 float AModularCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	Health = FMath::Clamp(Health - DamageAmount, 0.f, MaxHealth);
+	Stats.Health = FMath::Clamp(Stats.Health - DamageAmount, 0.f, Stats.MaxHealth);
 
-	if (Health == 0)
+	if (Stats.Health == 0)
 	{
 		ApplyRagdoll();
 	}
@@ -81,9 +81,14 @@ void AModularCharacter::ApplyRagdoll()
 }
 
 
+void AModularCharacter::SetStats(float FCharacterStats::* StatsField, float Value)
+{
+	Stats.*StatsField = Value;
+}
+
 bool AModularCharacter::UseStamina(float StaminaToUse)
 {
-	Stamina = FMath::Clamp(Stamina - StaminaToUse, 0.f, 100.f);
+	Stats.Stamina = FMath::Clamp(Stats.Stamina - StaminaToUse, 0.f, 100.f);
 
-	return (Stamina > 0);
+	return (Stats.Stamina > 0);
 }
