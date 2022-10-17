@@ -15,8 +15,6 @@ AModularCharacter::AModularCharacter()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	Stats.Health = Stats.MaxHealth;
-
 	//// BODY PARTS
 	BodyParts.Init(nullptr, GetBodyPartIndex(EBodyPart::COUNT));
 	for (int i = 0; i < GetBodyPartIndex(EBodyPart::COUNT); i++)
@@ -29,6 +27,9 @@ AModularCharacter::AModularCharacter()
 		BodyParts[i]->SetMasterPoseComponent(GetMesh());
 	}
 
+	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
+	Weapon->SetupAttachment(BodyParts[GetBodyPartIndex(EBodyPart::ARMS)], "RightHandSocket");
+	
 	//// CAMERA
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
 	Camera->SetupAttachment(GetMesh(), "head");
@@ -39,6 +40,8 @@ AModularCharacter::AModularCharacter()
 	GetCapsuleComponent()->SetCapsuleRadius(25.f);
 	GetMesh()->SetRelativeLocation(FVector(-20.f, 0.f, -90.f));
 	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
+
+	
 }
 
 float AModularCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -83,9 +86,7 @@ void AModularCharacter::ApplyRagdoll()
 void AModularCharacter::SetStat(float FCharacterStats::* StatsField, float Value)
 {
 	Stats.*StatsField = Value;
-
 }
-
 
 bool AModularCharacter::UseStamina(float StaminaToUse)
 {
