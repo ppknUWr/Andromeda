@@ -34,6 +34,7 @@ AModularCharacter::AModularCharacter()
 	Camera->SetupAttachment(GetMesh(), "head");
 	Camera->bUsePawnControlRotation = true;
 	Camera->SetFieldOfView(110.f);
+
 	
 	//// CHARACTER BODY
 	GetCapsuleComponent()->SetCapsuleRadius(25.f);
@@ -62,6 +63,7 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAxis("Turn Right / Left Mouse", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &APawn::AddControllerPitchInput);
+	
 }
 
 // Called when the game starts or when spawned
