@@ -36,8 +36,9 @@ public:
 	class UCameraComponent* Camera;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	FCharacterStats Stats;
-	
+	FCharacterStats CurrentsStats;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FCharacterStats MaxStats;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FWeaponExpGain WeaponExpGain;
 

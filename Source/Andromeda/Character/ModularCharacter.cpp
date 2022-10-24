@@ -47,9 +47,9 @@ AModularCharacter::AModularCharacter()
 
 float AModularCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	Stats.Health = FMath::Clamp(Stats.Health - DamageAmount, 0.f, Stats.MaxHealth);
+	CurrentsStats.Health = FMath::Clamp(CurrentsStats.Health - DamageAmount, 0.f, MaxStats.Health);
 
-	if (Stats.Health == 0)
+	if (CurrentsStats.Health == 0)
 	{
 		ApplyRagdoll();
 	}
@@ -88,12 +88,12 @@ void AModularCharacter::ApplyRagdoll()
 
 void AModularCharacter::SetStat(float FCharacterStats::* StatsField, float Value)
 {
-	Stats.*StatsField = Value;
+	CurrentsStats.*StatsField = Value;
 }
 
 bool AModularCharacter::UseStamina(float StaminaToUse)
 {
-	Stats.Stamina = FMath::Clamp(Stats.Stamina - StaminaToUse, 0.f, 100.f);
+	CurrentsStats.Stamina = FMath::Clamp(CurrentsStats.Stamina - StaminaToUse, 0.f, 100.f);
 
-	return (Stats.Stamina > 0);
+	return (CurrentsStats.Stamina > 0);
 }
