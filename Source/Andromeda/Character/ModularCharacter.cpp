@@ -27,8 +27,8 @@ AModularCharacter::AModularCharacter()
 		BodyParts[i]->SetMasterPoseComponent(GetMesh());
 	}
 
-	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
-	Weapon->SetupAttachment(BodyParts[GetBodyPartIndex(EBodyPart::ARMS)], "RightHandSocket");
+	//Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
+	//Weapon->SetupAttachment(BodyParts[GetBodyPartIndex(EBodyPart::ARMS)], "RightHandSocket");
 	
 	//// CAMERA
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
@@ -83,10 +83,10 @@ void AModularCharacter::ApplyRagdoll()
 	SetLifeSpan(5.f);
 }
 
-void AModularCharacter::SetStat(float FCharacterStats::* StatsField, float Value)
+/*void AModularCharacter::SetStat(float FCharacterStats::* StatsField, float Value)
 {
 	Stats.*StatsField = Value;
-}
+}*/
 
 bool AModularCharacter::UseStamina(float StaminaToUse)
 {

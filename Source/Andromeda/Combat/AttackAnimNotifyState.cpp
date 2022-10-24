@@ -19,7 +19,7 @@ void UAttackAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnim
 
 	if(AModularCharacter* ModularCharacter = Cast<AModularCharacter>(MeshComp->GetOwner()))
 	{
-		Weapon = ModularCharacter->Weapon;
+		//Weapon = ModularCharacter->Weapon;
 		TraceSockets = Weapon->SkeletalMesh->GetActiveSocketList();
 		
 		for(int i = 0; i < TraceSockets.Num(); i++)
