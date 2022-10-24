@@ -31,13 +31,14 @@ protected:
 	class UCameraComponent* Camera;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	FCharacterStats Stats;
+	FCharacterStats CurrentsStats;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FCharacterStats MaxStats;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FWeaponExpGain WeaponExpGain;
 
 public:
-	//UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
-	void SetStats(float FCharacterStats::* StatsField, float Value);
+	void SetStat(float FCharacterStats::* StatsField, float Value);
 	
 	//React to hit, based on hit result 's bone name
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
