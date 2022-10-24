@@ -24,7 +24,7 @@ public:
 
 public:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta=(GetOptions="GetActionText"))
 	FText UseActionText;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
@@ -44,4 +44,9 @@ public:
 
 	UPROPERTY()
 	UInventoryComponent* OwningInventory;
+
+protected:
+
+	UFUNCTION()
+	TArray<FText> GetActionText() const;
 };

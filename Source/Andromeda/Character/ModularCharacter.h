@@ -3,8 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Andromeda/Combat/WeaponComponent.h"
+#include "Andromeda/Equipment/WeaponItem.h"
 #include "GameFramework/Character.h"
 #include "ModularCharacter.generated.h"
+
+class UWeaponComponent;
 
 UENUM(BlueprintType)
 enum class EBodyPart : uint8
@@ -74,7 +78,7 @@ public:
 	bool UseStamina(float StaminaToUse);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USkeletalMeshComponent* Weapon;
+	UWeaponComponent* Weapon;
 
 protected:
 
@@ -90,4 +94,5 @@ public:
 	
 	FORCEINLINE void MoveForward(float Value) { AddMovementInput(GetActorForwardVector(), Value); }
 	FORCEINLINE void MoveRight(float Value) { AddMovementInput(GetActorRightVector(), Value); }
+	FORCEINLINE void LeftMouseClick() { Weapon->WeaponItem->LeftMouseClick(GetMesh()); }
 };
