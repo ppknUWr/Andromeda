@@ -42,5 +42,20 @@ struct FWeaponExpGain
 	float Bow = 5;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
 	float Spear = 7;
-
+ 
 };
+UENUM(BlueprintType)
+enum class EBodyPart : uint8
+{
+	HEAD UMETA(DisplayName = "Head"),
+	TORSO UMETA(DisplayName = "Torso"),
+	ARMS UMETA(DisplayName = "Arms"),
+	LEGS UMETA(DisplayName = "Legs"),
+	FEET UMETA(DisplayName = "Feet"),
+	COUNT UMETA(Hidden)
+};
+
+inline int GetBodyPartIndex(EBodyPart BodyPart)
+{
+	return static_cast<int>(BodyPart);
+}

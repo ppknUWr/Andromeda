@@ -5,25 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "CharacterStats.h"
-#include "WeaponExpGain.h"
 #include "ModularCharacter.generated.h"
-
-UENUM(BlueprintType)
-enum class EBodyPart : uint8
-{
-	HEAD UMETA(DisplayName = "Head"),
-	TORSO UMETA(DisplayName = "Torso"),
-	ARMS UMETA(DisplayName = "Arms"),
-	LEGS UMETA(DisplayName = "Legs"),
-	FEET UMETA(DisplayName = "Feet"),
-	COUNT UMETA(Hidden)
-};
-
-inline int GetBodyPartIndex(EBodyPart BodyPart)
-{
-	return static_cast<int>(BodyPart);
-}
-
 
 UCLASS(Abstract)
 class ANDROMEDA_API AModularCharacter : public ACharacter
