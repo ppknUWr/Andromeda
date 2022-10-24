@@ -29,6 +29,7 @@ AModularCharacter::AModularCharacter()
 
 	Weapon = CreateDefaultSubobject<UWeaponComponent>("Weapon");
 	Weapon->SetupAttachment(BodyParts[GetBodyPartIndex(EBodyPart::ARMS)], "RightHandSocket");
+
 	
 	//// CAMERA
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
