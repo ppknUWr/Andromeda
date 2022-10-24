@@ -5,7 +5,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
-#include "Components/SkeletalMeshComponent.h"
+#include "../Combat/WeaponComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 
@@ -27,8 +27,9 @@ AModularCharacter::AModularCharacter()
 		BodyParts[i]->SetMasterPoseComponent(GetMesh());
 	}
 
-	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
+	Weapon = CreateDefaultSubobject<UWeaponComponent>("Weapon");
 	Weapon->SetupAttachment(BodyParts[GetBodyPartIndex(EBodyPart::ARMS)], "RightHandSocket");
+
 	
 	//// CAMERA
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
@@ -65,6 +66,8 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAxis("Turn Right / Left Mouse", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &APawn::AddControllerPitchInput);
+
+	PlayerInputComponent->BindAction("LeftMouseClick", IE_Pressed, this, &AModularCharacter::LeftMouseClick);
 }
 
 // Called when the game starts or when spawned
