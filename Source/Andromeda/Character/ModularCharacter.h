@@ -59,9 +59,17 @@ protected:
 
 	void ApplyRagdoll();
 
+	void SprintStart();
+	void StopSprinting();
+	float WalkSpeed = 600;
+	float SprintSpeed = 1100;
+	
+
 public:
 	
 	FORCEINLINE void MoveForward(float Value) { AddMovementInput(GetActorForwardVector(), Value); }
 	FORCEINLINE void MoveRight(float Value) { AddMovementInput(GetActorRightVector(), Value); }
 	FORCEINLINE void LeftMouseClick() { Weapon->WeaponItem->LeftMouseClick(GetMesh()); }
+	FORCEINLINE void BeginCrouch() { Crouch(); }
+	FORCEINLINE void EndCrouch() { UnCrouch(); }
 };

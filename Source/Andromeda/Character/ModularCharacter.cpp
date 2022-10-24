@@ -37,6 +37,7 @@ AModularCharacter::AModularCharacter()
 	Camera->bUsePawnControlRotation = true;
 	Camera->SetFieldOfView(110.f);
 
+	
 	//// CHARACTER BODY
 	GetCapsuleComponent()->SetCapsuleRadius(25.f);
 	GetMesh()->SetRelativeLocation(FVector(-20.f, 0.f, -90.f));
@@ -68,6 +69,16 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &APawn::AddControllerPitchInput);
 
 	PlayerInputComponent->BindAction("LeftMouseClick", IE_Pressed, this, &AModularCharacter::LeftMouseClick);
+	
+	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Released, this, &ACharacter::StopJumping);
+
+	PlayerInputComponent->BindAction("Sprint", EInputEvent::IE_Pressed, this, &AModularCharacter::SprintStart);
+	PlayerInputComponent->BindAction("Sprint", EInputEvent::IE_Released, this, &AModularCharacter::StopSprinting);
+
+	PlayerInputComponent->BindAction("Crouch", EInputEvent::IE_Pressed, this, &AModularCharacter::BeginCrouch);
+	PlayerInputComponent->BindAction("Crouch", EInputEvent::IE_Released, this, &AModularCharacter::EndCrouch);
+
 }
 
 // Called when the game starts or when spawned
@@ -96,4 +107,14 @@ bool AModularCharacter::UseStamina(float StaminaToUse)
 	CurrentsStats.Stamina = FMath::Clamp(CurrentsStats.Stamina - StaminaToUse, 0.f, 100.f);
 
 	return (CurrentsStats.Stamina > 0);
+}
+
+void AModularCharacter::SprintStart()
+{
+	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+}
+
+void AModularCharacter::StopSprinting()
+{
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 }
