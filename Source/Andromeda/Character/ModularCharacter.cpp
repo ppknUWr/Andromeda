@@ -2,12 +2,16 @@
 
 
 #include "ModularCharacter.h"
+
+#include "Andromeda/Interfaces/Interactable.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
+#define Print(String) GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Blue, String)
 
 // Sets default values
 AModularCharacter::AModularCharacter()
@@ -65,6 +69,8 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAxis("Turn Right / Left Mouse", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &APawn::AddControllerPitchInput);
+
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AModularCharacter::Interact);
 }
 
 // Called when the game starts or when spawned
@@ -81,6 +87,32 @@ void AModularCharacter::ApplyRagdoll()
 	GetCharacterMovement()->DisableMovement();
 
 	SetLifeSpan(5.f);
+}
+
+void AModularCharacter::InteractWithActor(AActor* InteractableActor)
+{
+	if(InteractableActor != nullptr)
+	{
+		IInteractable::Execute_Interact(InteractableActor,this);
+	}
+}
+
+AActor* AModularCharacter::CastLineTrace()
+{
+	FHitResult HitResult;
+	FVector Start = Camera->GetComponentLocation();
+	FVector End = Camera->GetForwardVector() * 200 + Start;
+	if(UKismetSystemLibrary::LineTraceSingle(this, Start, End, TraceTypeQuery2, false, {}, EDrawDebugTrace::ForDuration, HitResult, true ))
+	{
+		if( HitResult.GetActor()->Implements<UInteractable>() )
+		{
+			if(IInteractable::Execute_CanBeInteractedWith(HitResult.GetActor(), this))
+			{
+				return HitResult.GetActor();
+			}
+		}
+	}
+	return nullptr;
 }
 
 void AModularCharacter::SetStat(float FCharacterStats::* StatsField, float Value)

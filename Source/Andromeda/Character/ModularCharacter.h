@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Andromeda/Interfaces/Interactable.h"
 #include "GameFramework/Character.h"
 #include "ModularCharacter.generated.h"
 
@@ -79,7 +80,9 @@ public:
 protected:
 
 	void ApplyRagdoll();
-
+	void InteractWithActor(AActor* InteractableActor);
+	AActor* CastLineTrace();
+	
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
@@ -90,4 +93,5 @@ public:
 	
 	FORCEINLINE void MoveForward(float Value) { AddMovementInput(GetActorForwardVector(), Value); }
 	FORCEINLINE void MoveRight(float Value) { AddMovementInput(GetActorRightVector(), Value); }
+	FORCEINLINE void Interact() { InteractWithActor(CastLineTrace()); };
 };
