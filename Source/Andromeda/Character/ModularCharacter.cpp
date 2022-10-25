@@ -2,11 +2,11 @@
 
 
 #include "ModularCharacter.h"
+#include "Andromeda/Combat/WeaponComponent.h"
+#include "Andromeda/Equipment/WeaponItem.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
-#include "../Combat/WeaponComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 
 
 // Sets default values
@@ -70,14 +70,14 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAction("LeftMouseClick", IE_Pressed, this, &AModularCharacter::LeftMouseClick);
 	
-	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
-	PlayerInputComponent->BindAction("Sprint", EInputEvent::IE_Pressed, this, &AModularCharacter::SprintStart);
-	PlayerInputComponent->BindAction("Sprint", EInputEvent::IE_Released, this, &AModularCharacter::StopSprinting);
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AModularCharacter::SprintStart);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AModularCharacter::StopSprinting);
 
-	PlayerInputComponent->BindAction("Crouch", EInputEvent::IE_Pressed, this, &AModularCharacter::BeginCrouch);
-	PlayerInputComponent->BindAction("Crouch", EInputEvent::IE_Released, this, &AModularCharacter::EndCrouch);
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AModularCharacter::BeginCrouch);
+	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AModularCharacter::EndCrouch);
 
 }
 
@@ -97,6 +97,11 @@ void AModularCharacter::ApplyRagdoll()
 	SetLifeSpan(5.f);
 }
 
+void AModularCharacter::LeftMouseClick()
+{
+	Weapon->WeaponItem->LeftMouseClick(GetMesh());
+}
+
 void AModularCharacter::SetStat(float FCharacterStats::* StatsField, float Value)
 {
 	CurrentsStats.*StatsField = Value;
@@ -107,14 +112,4 @@ bool AModularCharacter::UseStamina(float StaminaToUse)
 	CurrentsStats.Stamina = FMath::Clamp(CurrentsStats.Stamina - StaminaToUse, 0.f, 100.f);
 
 	return (CurrentsStats.Stamina > 0);
-}
-
-void AModularCharacter::SprintStart()
-{
-	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
-}
-
-void AModularCharacter::StopSprinting()
-{
-	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 }

@@ -3,10 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Andromeda/Combat/WeaponComponent.h"
-#include "Andromeda/Equipment/WeaponItem.h"
 #include "CharacterStats.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "ModularCharacter.generated.h"
 
 
@@ -58,9 +57,8 @@ public:
 protected:
 
 	void ApplyRagdoll();
-
-	void SprintStart();
-	void StopSprinting();
+	void LeftMouseClick();
+	
 	float WalkSpeed = 600;
 	float SprintSpeed = 1100;
 	
@@ -69,7 +67,8 @@ public:
 	
 	FORCEINLINE void MoveForward(float Value) { AddMovementInput(GetActorForwardVector(), Value); }
 	FORCEINLINE void MoveRight(float Value) { AddMovementInput(GetActorRightVector(), Value); }
-	FORCEINLINE void LeftMouseClick() { Weapon->WeaponItem->LeftMouseClick(GetMesh()); }
+	FORCEINLINE void SprintStart() { GetCharacterMovement()->MaxWalkSpeed = SprintSpeed; }
+	FORCEINLINE void StopSprinting() { GetCharacterMovement()->MaxWalkSpeed = WalkSpeed; }
 	FORCEINLINE void BeginCrouch() { Crouch(); }
 	FORCEINLINE void EndCrouch() { UnCrouch(); }
 };
