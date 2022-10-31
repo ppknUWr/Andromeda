@@ -45,7 +45,7 @@ void UAttackAnimNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimS
 		FVector EndPoint = TraceSockets[i]->GetSocketLocation(Weapon);
 		
 		
-		if(UKismetSystemLibrary::LineTraceSingle(Weapon, StartPoint, EndPoint, ETraceTypeQuery::TraceTypeQuery2,
+		if(UKismetSystemLibrary::LineTraceSingle(Weapon, StartPoint, EndPoint, TraceTypeQuery3,
            			false, IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true))
 		{
 			IgnoreActors.AddUnique(HitResult.GetActor());
