@@ -2,11 +2,11 @@
 
 
 #include "ModularCharacter.h"
+#include "Andromeda/Combat/WeaponComponent.h"
+#include "Andromeda/Equipment/WeaponItem.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
-#include "../Combat/WeaponComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 
 
 // Sets default values
@@ -29,6 +29,7 @@ AModularCharacter::AModularCharacter()
 
 	Weapon = CreateDefaultSubobject<UWeaponComponent>("Weapon");
 	Weapon->SetupAttachment(BodyParts[GetBodyPartIndex(EBodyPart::ARMS)], "RightHandSocket");
+
 	
 	//// CAMERA
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
@@ -36,6 +37,7 @@ AModularCharacter::AModularCharacter()
 	Camera->bUsePawnControlRotation = true;
 	Camera->SetFieldOfView(110.f);
 
+	
 	//// CHARACTER BODY
 	GetCapsuleComponent()->SetCapsuleRadius(25.f);
 	GetMesh()->SetRelativeLocation(FVector(-20.f, 0.f, -90.f));
@@ -46,9 +48,9 @@ AModularCharacter::AModularCharacter()
 
 float AModularCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	Stats.Health = FMath::Clamp(Stats.Health - DamageAmount, 0.f, Stats.MaxHealth);
+	CurrentsStats.Health = FMath::Clamp(CurrentsStats.Health - DamageAmount, 0.f, MaxStats.Health);
 
-	if (Stats.Health == 0)
+	if (CurrentsStats.Health == 0)
 	{
 		ApplyRagdoll();
 	}
@@ -67,6 +69,16 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &APawn::AddControllerPitchInput);
 
 	PlayerInputComponent->BindAction("LeftMouseClick", IE_Pressed, this, &AModularCharacter::LeftMouseClick);
+	
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AModularCharacter::SprintStart);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AModularCharacter::StopSprinting);
+
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AModularCharacter::BeginCrouch);
+	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AModularCharacter::EndCrouch);
+
 }
 
 // Called when the game starts or when spawned
@@ -85,14 +97,19 @@ void AModularCharacter::ApplyRagdoll()
 	SetLifeSpan(5.f);
 }
 
+void AModularCharacter::LeftMouseClick()
+{
+	Weapon->WeaponItem->LeftMouseClick(GetMesh());
+}
+
 void AModularCharacter::SetStat(float FCharacterStats::* StatsField, float Value)
 {
-	Stats.*StatsField = Value;
+	CurrentsStats.*StatsField = Value;
 }
 
 bool AModularCharacter::UseStamina(float StaminaToUse)
 {
-	Stats.Stamina = FMath::Clamp(Stats.Stamina - StaminaToUse, 0.f, 100.f);
+	CurrentsStats.Stamina = FMath::Clamp(CurrentsStats.Stamina - StaminaToUse, 0.f, 100.f);
 
-	return (Stats.Stamina > 0);
+	return (CurrentsStats.Stamina > 0);
 }

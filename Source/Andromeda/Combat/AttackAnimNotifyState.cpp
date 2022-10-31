@@ -3,6 +3,7 @@
 
 #include "AttackAnimNotifyState.h"
 
+#include "WeaponComponent.h"
 #include "Andromeda/Character/ModularCharacter.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/KismetSystemLibrary.h"
