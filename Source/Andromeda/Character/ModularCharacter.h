@@ -58,6 +58,7 @@ protected:
 
 	void ApplyRagdoll();
 	void LeftMouseClick();
+	void LeftMouseRelease();
 	
 	float WalkSpeed = 600;
 	float SprintSpeed = 1100;

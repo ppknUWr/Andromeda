@@ -28,7 +28,7 @@ AModularCharacter::AModularCharacter()
 	}
 
 	Weapon = CreateDefaultSubobject<UWeaponComponent>("Weapon");
-	Weapon->SetupAttachment(BodyParts[GetBodyPartIndex(EBodyPart::ARMS)], "RightHandSocket");
+	Weapon->SetupAttachment(GetMesh(), "LeftHipSocket");
 
 	
 	//// CAMERA
@@ -99,7 +99,20 @@ void AModularCharacter::ApplyRagdoll()
 
 void AModularCharacter::LeftMouseClick()
 {
-	Weapon->WeaponItem->LeftMouseClick(GetMesh());
+	if(Weapon->IsWeaponEquipped())
+	{
+		Weapon->WeaponItem->LeftMousePressed(GetMesh());
+	}
+
+	if(Weapon->IsWeaponAtRest())
+	{
+		Weapon->EquipWeapon(this);
+	}
+}
+
+void AModularCharacter::LeftMouseRelease()
+{
+	Weapon->WeaponItem->LeftMouseReleased(GetMesh());
 }
 
 void AModularCharacter::SetStat(float FCharacterStats::* StatsField, float Value)
