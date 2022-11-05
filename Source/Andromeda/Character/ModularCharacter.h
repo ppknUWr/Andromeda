@@ -8,7 +8,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ModularCharacter.generated.h"
 
-
+class UItem;
+class UInventoryComponent;
 class UWeaponComponent;
 
 UCLASS(Abstract)
@@ -41,6 +42,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FWeaponExpGain WeaponExpGain;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAcess = "true"))
+	UInventoryComponent* Inventory;
+
 	void SetStat(float FCharacterStats::* StatsField, float Value);
 	
 	//React to hit, based on hit result 's bone name
@@ -53,6 +57,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UWeaponComponent* Weapon;
+
+	UFUNCTION(BlueprintCallable, Category = "Items")
+	void UseItem(UItem* Item);
 
 protected:
 
