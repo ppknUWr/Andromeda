@@ -2,7 +2,6 @@
 
 
 #include "WeaponComponent.h"
-
 #include "Andromeda/Character/ModularCharacter.h"
 #include "Andromeda/Equipment/WeaponItem.h"
 
@@ -48,5 +47,10 @@ void UWeaponComponent::BeginPlay()
 	if(WeaponItem)
 	{
 		SetSkeletalMesh(WeaponItem->AttachMesh);
+
+		if(AModularCharacter* ModularCharacter = Cast<AModularCharacter>(GetOwner()))
+		{
+			AttachToComponent(ModularCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponItem->WeaponRestSocket);
+		}
 	}
 }
