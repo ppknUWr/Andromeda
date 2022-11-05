@@ -57,8 +57,8 @@ void UAttackAnimNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimS
 			
 			UGameplayStatics::ApplyDamage(HitResult.GetActor(), Weapon->WeaponItem->Damage, Instigator, Weapon->GetOwner(), UDamageType::StaticClass());
 			
-			PrintInfo(HitResult.GetActor()->GetName());
-			PrintInfo(HitResult.BoneName.ToString());
+			//PrintInfo(HitResult.GetActor()->GetName());
+			//PrintInfo(HitResult.BoneName.ToString());
 		}
 
 		PreviousLocations[i] = EndPoint;
