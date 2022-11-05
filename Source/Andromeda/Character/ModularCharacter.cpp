@@ -7,6 +7,8 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "../Equipment/Item.h"
+#include "../Equipment/InventoryComponent.h"
 
 
 // Sets default values
@@ -43,6 +45,9 @@ AModularCharacter::AModularCharacter()
 	GetMesh()->SetRelativeLocation(FVector(-20.f, 0.f, -90.f));
 	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 
+	//// INITIALIZE INVENTORY
+	Inventory = CreateDefaultSubobject<UInventoryComponent>("Inventory");
+	Inventory->Capacity = 20;
 	
 }
 
@@ -85,6 +90,15 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 void AModularCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void AModularCharacter::UseItem(UItem* Item)
+{
+	if (Item)
+	{
+		Item->Use(this);
+		Item->OnUse(this); // Blueprint event.
+	}
 }
 
 void AModularCharacter::ApplyRagdoll()

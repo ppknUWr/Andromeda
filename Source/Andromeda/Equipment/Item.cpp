@@ -9,8 +9,11 @@ UItem::UItem()
 	ItemDisplayName = FText::FromString("Item");
 	ItemDescription = FText::FromString("Basic Item Description");
 	Weight = 1.f;
+}
 
-	
+void UItem::Use(class ACharacter* Character)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Blue, "Item used");
 }
 
 TArray<FText> UItem::GetActionText() const
