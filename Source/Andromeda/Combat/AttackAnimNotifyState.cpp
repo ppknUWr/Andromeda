@@ -2,13 +2,16 @@
 
 
 #include "AttackAnimNotifyState.h"
-
 #include "WeaponComponent.h"
 #include "Andromeda/Character/ModularCharacter.h"
+#include "Andromeda/Equipment/WeaponItem.h"
 #include "Engine/SkeletalMeshSocket.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-#define Print(String) GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Blue, String)
+#define PrintInfo(String) GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Blue, String)
+#define PrintWarning(String) GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Yellow, String)
+#define PrintError(String) GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Red, String)
 
 void UAttackAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
@@ -21,7 +24,7 @@ void UAttackAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnim
 	if(AModularCharacter* ModularCharacter = Cast<AModularCharacter>(MeshComp->GetOwner()))
 	{
 		Weapon = ModularCharacter->Weapon;
-		TraceSockets = Weapon->SkeletalMesh->GetActiveSocketList();
+		TraceSockets = Weapon->SkeletalMesh->GetActiveSocketList();// collect all sockets
 		
 		for(int i = 0; i < TraceSockets.Num(); i++)
 		{
@@ -45,12 +48,17 @@ void UAttackAnimNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimS
 		FVector EndPoint = TraceSockets[i]->GetSocketLocation(Weapon);
 		
 		
-		if(UKismetSystemLibrary::LineTraceSingle(Weapon, StartPoint, EndPoint, ETraceTypeQuery::TraceTypeQuery2,
+		if(UKismetSystemLibrary::LineTraceSingle(Weapon, StartPoint, EndPoint, TraceTypeQuery3,
            			false, IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true))
 		{
 			IgnoreActors.AddUnique(HitResult.GetActor());
-			Print(HitResult.GetActor()->GetHumanReadableName());
-			Print(HitResult.BoneName.ToString());
+
+			AController* Instigator = Cast<APawn>(Weapon->GetOwner())->GetController();
+			
+			UGameplayStatics::ApplyDamage(HitResult.GetActor(), Weapon->WeaponItem->Damage, Instigator, Weapon->GetOwner(), UDamageType::StaticClass());
+			
+			//PrintInfo(HitResult.GetActor()->GetName());
+			//PrintInfo(HitResult.BoneName.ToString());
 		}
 
 		PreviousLocations[i] = EndPoint;
