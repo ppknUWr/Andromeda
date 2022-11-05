@@ -1,16 +1,17 @@
 ﻿#pragma once
+#include "Engine/DataTable.h"
 #include "CharacterStats.generated.h"
 
 USTRUCT(BlueprintType)
-struct FCharacterStats
+struct FCharacterStats : public FTableRowBase
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category="Basic Stats")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
 	float Health;
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category="Basic Stats")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
 	float Stamina;
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category="Basic Stats")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
 	float Mana;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
 	float Strength;

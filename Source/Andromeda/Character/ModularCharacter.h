@@ -40,7 +40,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FCharacterStats MaxStats;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FCharacterStats StatsEXP;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FWeaponExpGain WeaponExpGain;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FWeaponExpGain WeaponExp;
 
 	void SetStat(float FCharacterStats::* StatsField, float Value);
 	
