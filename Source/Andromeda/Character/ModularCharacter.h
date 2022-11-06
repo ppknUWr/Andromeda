@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CharacterStats.h"
+#include "Andromeda/Equipment/WeaponItem.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ModularCharacter.generated.h"
@@ -45,8 +46,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FWeaponExpGain WeaponExp;
 
-	void SetStat(float FCharacterStats::* StatsField, float Value);
-	
+	void SetCurrentStat(float FCharacterStats::* StatsField, float Value);
+	void SetMaxStat(float FCharacterStats::* StatsField, float Value);
+	void SetStatExp(float FCharacterStats::* StatsField, float Value);
+	void SetWeaponExp(float FWeaponExpGain::* StatsField, float Value);
+	void SetWeaponExpGained(float FWeaponExpGain::* StatsField, float Value);
+	void AddWeaponExp();
+
 	//React to hit, based on hit result 's bone name
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void ReactToHit(FName BoneName);

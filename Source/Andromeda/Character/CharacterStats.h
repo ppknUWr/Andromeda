@@ -8,15 +8,15 @@ struct FCharacterStats : public FTableRowBase
 	GENERATED_BODY()
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
-	float Health;
+	float Health=0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
-	float Stamina;
+	float Stamina=0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
-	float Mana;
+	float Mana=0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
-	float Strength;
+	float Strength=0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
-	float Dexterity;
+	float Dexterity=0;
 };
 
 USTRUCT(BlueprintType)
@@ -25,13 +25,15 @@ struct FWeaponExpGain
 	GENERATED_BODY()
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
-	float Sword = 10;
+	float Sword = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
-	float Shield = 3;
+	float Shield = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
-	float Bow = 5;
+	float Bow = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
-	float Spear = 7;
+	float Spear = 0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Basic Stats")
+	float Warhammer = 0;
  
 };
 UENUM(BlueprintType)
