@@ -129,9 +129,43 @@ void AModularCharacter::LeftMouseRelease()
 	Weapon->WeaponItem->LeftMouseReleased(GetMesh());
 }
 
-void AModularCharacter::SetStat(float FCharacterStats::* StatsField, float Value)
+void AModularCharacter::SetCurrentStat(float FCharacterStats::* StatsField, float Value)
 {
 	CurrentsStats.*StatsField = Value;
+}
+void AModularCharacter::SetMaxStat(float FCharacterStats::* StatsField, float Value)
+{
+	MaxStats.*StatsField = Value;
+}
+void AModularCharacter::SetStatExp(float FCharacterStats::* StatsField, float Value)
+{
+	StatsEXP.*StatsField = Value;
+}
+void AModularCharacter::SetWeaponExp(float FWeaponExpGain::* WeaponField, float Value)
+{
+	WeaponExp.*WeaponField = Value;
+}
+void AModularCharacter::SetWeaponExpGained(float FWeaponExpGain::* WeaponField, float Value)
+{
+	WeaponExpGain.*WeaponField = Value;
+}
+
+void AModularCharacter::AddWeaponExp()
+{
+	float ExpGain = Weapon->WeaponItem->ExpGain;
+	SetStatExp(&FCharacterStats::Strength, StatsEXP.Strength + ExpGain);
+	
+	if (Weapon->WeaponItem->GetName().Contains("Sword")) {
+		SetWeaponExpGained(&FWeaponExpGain::Sword, WeaponExpGain.Sword + ExpGain);
+	} else if (Weapon->WeaponItem->GetName().Contains("Warhammer")) {
+		SetWeaponExpGained(&FWeaponExpGain::Warhammer, WeaponExpGain.Warhammer + ExpGain);
+	} else if (Weapon->WeaponItem->GetName().Contains("Bow")) {
+		SetWeaponExpGained(&FWeaponExpGain::Bow, WeaponExpGain.Bow + ExpGain);
+	} else if (Weapon->WeaponItem->GetName().Contains("Spear")) {
+		SetWeaponExpGained(&FWeaponExpGain::Spear, WeaponExpGain.Spear + ExpGain);
+	} else if (Weapon->WeaponItem->GetName().Contains("Shield")) {
+		SetWeaponExpGained(&FWeaponExpGain::Shield, WeaponExpGain.Shield + ExpGain);
+	} 
 }
 
 bool AModularCharacter::UseStamina(float StaminaToUse)

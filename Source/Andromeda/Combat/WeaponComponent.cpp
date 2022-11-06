@@ -3,6 +3,7 @@
 
 #include "WeaponComponent.h"
 #include "Andromeda/Character/ModularCharacter.h"
+
 #include "Andromeda/Equipment/WeaponItem.h"
 
 
