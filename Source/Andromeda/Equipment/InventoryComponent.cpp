@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ // Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "InventoryComponent.h"
@@ -33,6 +33,7 @@ bool UInventoryComponent::AddItem(UItem* Item)
 	}
 
 	Item->OwningInventory = this;
+	Item->World = GetWorld();
 	Items.Add(Item);
 
 	OnInventoryUpdated.Broadcast();
@@ -45,6 +46,7 @@ bool UInventoryComponent::RemoveItem(UItem* Item)
 	if (Item)
 	{
 		Item->OwningInventory = nullptr;
+		Item->World = nullptr;
 		Items.RemoveSingle(Item);
 
 		OnInventoryUpdated.Broadcast();

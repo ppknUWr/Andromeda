@@ -17,14 +17,21 @@ public:
 	
 	UItem();
 
-	virtual void Use(class ACharacter* Character) PURE_VIRTUAL(UItem, );
+	virtual class UWorld* GetWorld() const { return World; };
+
+	// Delete pure virtual for now.
+
+	virtual void Use(class ACharacter* Character);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnUse(class ACharacter* Character);
 
 public:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
+	UPROPERTY(Transient)
+	class UWorld* World;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta=(GetOptions="GetActionText"))
 	FText UseActionText;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
@@ -44,4 +51,9 @@ public:
 
 	UPROPERTY()
 	UInventoryComponent* OwningInventory;
+
+protected:
+
+	UFUNCTION()
+	TArray<FText> GetActionText() const;
 };

@@ -2,16 +2,18 @@
 
 
 #include "ModularCharacter.h"
-
-#include "Andromeda/Interfaces/Interactable.h"
+#include "Andromeda/Combat/WeaponComponent.h"
+#include "Andromeda/Equipment/WeaponItem.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "../Equipment/Item.h"
+#include "../Equipment/InventoryComponent.h"
+#include "Andromeda/Interfaces/Interactable.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-#define Print(String) GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Blue, String)
 
 // Sets default values
 AModularCharacter::AModularCharacter()
@@ -31,8 +33,9 @@ AModularCharacter::AModularCharacter()
 		BodyParts[i]->SetMasterPoseComponent(GetMesh());
 	}
 
-	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
-	Weapon->SetupAttachment(BodyParts[GetBodyPartIndex(EBodyPart::ARMS)], "RightHandSocket");
+	Weapon = CreateDefaultSubobject<UWeaponComponent>("Weapon");
+	Weapon->SetupAttachment(GetMesh(), "LeftHipSocket");
+
 	
 	//// CAMERA
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
@@ -40,19 +43,23 @@ AModularCharacter::AModularCharacter()
 	Camera->bUsePawnControlRotation = true;
 	Camera->SetFieldOfView(110.f);
 
+	
 	//// CHARACTER BODY
 	GetCapsuleComponent()->SetCapsuleRadius(25.f);
 	GetMesh()->SetRelativeLocation(FVector(-20.f, 0.f, -90.f));
 	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 
+	//// INITIALIZE INVENTORY
+	Inventory = CreateDefaultSubobject<UInventoryComponent>("Inventory");
+	Inventory->Capacity = 20;
 	
 }
 
 float AModularCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	Stats.Health = FMath::Clamp(Stats.Health - DamageAmount, 0.f, Stats.MaxHealth);
+	CurrentsStats.Health = FMath::Clamp(CurrentsStats.Health - DamageAmount, 0.f, MaxStats.Health);
 
-	if (Stats.Health == 0)
+	if (CurrentsStats.Health == 0)
 	{
 		ApplyRagdoll();
 	}
@@ -69,14 +76,35 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAxis("Turn Right / Left Mouse", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &APawn::AddControllerPitchInput);
-
+	
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AModularCharacter::Interact);
+
+	PlayerInputComponent->BindAction("LeftMouseClick", IE_Pressed, this, &AModularCharacter::LeftMouseClick);
+	
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AModularCharacter::SprintStart);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AModularCharacter::StopSprinting);
+
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AModularCharacter::BeginCrouch);
+	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AModularCharacter::EndCrouch);
+	
 }
 
 // Called when the game starts or when spawned
 void AModularCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void AModularCharacter::UseItem(UItem* Item)
+{
+	if (Item)
+	{
+		Item->Use(this);
+		Item->OnUse(this); // Blueprint event.
+	}
 }
 
 void AModularCharacter::ApplyRagdoll()
@@ -115,14 +143,32 @@ AActor* AModularCharacter::CastLineTrace()
 	return nullptr;
 }
 
+void AModularCharacter::LeftMouseClick()
+{
+	if(Weapon->IsWeaponEquipped())
+	{
+		Weapon->WeaponItem->LeftMousePressed(GetMesh());
+	}
+
+	if(Weapon->IsWeaponAtRest())
+	{
+		Weapon->EquipWeapon(this);
+	}
+}
+
+void AModularCharacter::LeftMouseRelease()
+{
+	Weapon->WeaponItem->LeftMouseReleased(GetMesh());
+}
+
 void AModularCharacter::SetStat(float FCharacterStats::* StatsField, float Value)
 {
-	Stats.*StatsField = Value;
+	CurrentsStats.*StatsField = Value;
 }
 
 bool AModularCharacter::UseStamina(float StaminaToUse)
 {
-	Stats.Stamina = FMath::Clamp(Stats.Stamina - StaminaToUse, 0.f, 100.f);
+	CurrentsStats.Stamina = FMath::Clamp(CurrentsStats.Stamina - StaminaToUse, 0.f, 100.f);
 
-	return (Stats.Stamina > 0);
+	return (CurrentsStats.Stamina > 0);
 }

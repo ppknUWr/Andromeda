@@ -9,6 +9,8 @@
 /**
  * 
  */
+
+class UWeaponComponent;
 UCLASS()
 class ANDROMEDA_API UAttackAnimNotifyState : public UAnimNotifyState
 {
@@ -29,7 +31,5 @@ public:
 	TArray<FVector> PreviousLocations;
 
 	UPROPERTY()
-	USkeletalMeshComponent* Weapon;
-
-	
+	UWeaponComponent* Weapon;
 };
