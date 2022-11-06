@@ -53,7 +53,7 @@ void UAttackAnimNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimS
 
 
 		PreviousLocations[i] = EndPoint;
-		if(UKismetSystemLibrary::LineTraceSingle(Weapon, StartPoint, EndPoint, ETraceTypeQuery::TraceTypeQuery2,
+		if(UKismetSystemLibrary::LineTraceSingle(Weapon, StartPoint, EndPoint, TraceTypeQuery3,
 		                                         false, IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true))
 		{
 			IgnoreActors.AddUnique(HitResult.GetActor());
