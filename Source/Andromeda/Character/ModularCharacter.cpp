@@ -98,6 +98,21 @@ void AModularCharacter::BeginPlay()
 	Super::BeginPlay();
 }
 
+void AModularCharacter::Tick(float DeltaSeconds)
+{
+	AActor* CurrentlyViewedObject = CastLineTrace();
+
+	if( CurrentlyViewedObject != LastSeenInteractableObject)
+	{
+		if(LastSeenInteractableObject != nullptr)
+		{
+			IInteractable::Execute_IsNoLongerLookedAt(LastSeenInteractableObject, this);
+		}
+		LastSeenInteractableObject = CurrentlyViewedObject;
+	}
+	Super::Tick(DeltaSeconds);
+}
+
 void AModularCharacter::UseItem(UItem* Item)
 {
 	if (Item)
