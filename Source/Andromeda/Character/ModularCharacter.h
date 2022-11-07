@@ -85,6 +85,8 @@ protected:
 
 	void InteractWithActor(AActor* InteractableActor);
 	AActor* CastLineTrace();
+
+	UPROPERTY(BlueprintReadWrite)
 	AActor* LastSeenInteractableObject = nullptr;
 	
 	void LeftMouseClick();
