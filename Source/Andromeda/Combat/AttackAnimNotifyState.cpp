@@ -2,7 +2,11 @@
 
 
 #include "AttackAnimNotifyState.h"
+
+#include <string>
+
 #include "WeaponComponent.h"
+
 #include "Andromeda/Character/ModularCharacter.h"
 #include "Andromeda/Equipment/WeaponItem.h"
 #include "Engine/SkeletalMeshSocket.h"
@@ -46,21 +50,30 @@ void UAttackAnimNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimS
 	{
 		FVector StartPoint = PreviousLocations[i];
 		FVector EndPoint = TraceSockets[i]->GetSocketLocation(Weapon);
-		
-		
+
+
+		PreviousLocations[i] = EndPoint;
 		if(UKismetSystemLibrary::LineTraceSingle(Weapon, StartPoint, EndPoint, TraceTypeQuery3,
-           			false, IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true))
+		                                         false, IgnoreActors, EDrawDebugTrace::ForDuration, HitResult, true))
 		{
 			IgnoreActors.AddUnique(HitResult.GetActor());
 
 			AController* Instigator = Cast<APawn>(Weapon->GetOwner())->GetController();
 			
 			UGameplayStatics::ApplyDamage(HitResult.GetActor(), Weapon->WeaponItem->Damage, Instigator, Weapon->GetOwner(), UDamageType::StaticClass());
-			
+
 			//PrintInfo(HitResult.GetActor()->GetName());
 			//PrintInfo(HitResult.BoneName.ToString());
-		}
 
-		PreviousLocations[i] = EndPoint;
+			ApplyExp(MeshComp);
+		}
 	}
+}
+
+void UAttackAnimNotifyState::ApplyExp(USkeletalMeshComponent* MeshComp)
+{
+	AModularCharacter* ModularCharacter = Cast<AModularCharacter>(MeshComp->GetOwner());
+	ModularCharacter->AddWeaponExp();
+	//PrintInfo(Weapon->WeaponItem->GetName() + " experience gained: "  + FString::SanitizeFloat(ModularCharacter->WeaponExpGain.Sword));
+	//PrintInfo("Player strengh experience gained: " + FString::SanitizeFloat(ModularCharacter->StatsEXP.Strength));
 }

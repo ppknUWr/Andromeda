@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Item.h"
+#include "Andromeda/Character/CharacterStats.h"
 #include "WeaponItem.generated.h"
 
 /**
@@ -21,6 +22,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta = (ClampMin = 0.0))
 	float Damage;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta = (ClampMin = 0.0))
+	float ExpGain;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item", meta=(GetOptions="GetWeaponAttachSocket"))
 	FName WeaponAttachSocket;
