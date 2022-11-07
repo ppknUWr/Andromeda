@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Andromeda/Interfaces/Interactable.h"
 #include "CharacterStats.h"
 #include "Andromeda/Equipment/WeaponItem.h"
 #include "GameFramework/Character.h"
@@ -13,6 +14,7 @@ class UItem;
 class UInventoryComponent;
 
 class UWeaponComponent;
+
 
 UCLASS(Abstract)
 class ANDROMEDA_API AModularCharacter : public ACharacter
@@ -28,8 +30,10 @@ public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 
+public:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<USkeletalMeshComponent*> BodyParts;
@@ -78,12 +82,18 @@ public:
 protected:
 
 	void ApplyRagdoll();
+
+	void InteractWithActor(AActor* InteractableActor);
+	AActor* CastLineTrace();
+	AActor* LastSeenInteractableObject = nullptr;
+	
 	void LeftMouseClick();
 	void LeftMouseRelease();
 	
 	float WalkSpeed = 600;
 	float SprintSpeed = 1100;
 	
+
 
 public:
 	
@@ -93,4 +103,5 @@ public:
 	FORCEINLINE void StopSprinting() { GetCharacterMovement()->MaxWalkSpeed = WalkSpeed; }
 	FORCEINLINE void BeginCrouch() { Crouch(); }
 	FORCEINLINE void EndCrouch() { UnCrouch(); }
+	FORCEINLINE void Interact() { InteractWithActor(CastLineTrace()); };
 };

@@ -9,13 +9,17 @@
 #include "Components/InputComponent.h"
 #include "../Equipment/Item.h"
 #include "../Equipment/InventoryComponent.h"
+#include "Andromeda/Interfaces/Interactable.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 
 // Sets default values
 AModularCharacter::AModularCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	//// BODY PARTS
 	BodyParts.Init(nullptr, GetBodyPartIndex(EBodyPart::COUNT));
@@ -72,6 +76,8 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAxis("Turn Right / Left Mouse", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &APawn::AddControllerPitchInput);
+	
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AModularCharacter::Interact);
 
 	PlayerInputComponent->BindAction("LeftMouseClick", IE_Pressed, this, &AModularCharacter::LeftMouseClick);
 	
@@ -83,13 +89,28 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AModularCharacter::BeginCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AModularCharacter::EndCrouch);
-
+	
 }
 
 // Called when the game starts or when spawned
 void AModularCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void AModularCharacter::Tick(float DeltaSeconds)
+{
+	AActor* CurrentlyViewedObject = CastLineTrace();
+
+	if( CurrentlyViewedObject != LastSeenInteractableObject)
+	{
+		if(LastSeenInteractableObject != nullptr)
+		{
+			IInteractable::Execute_IsNoLongerLookedAt(LastSeenInteractableObject, this);
+		}
+		LastSeenInteractableObject = CurrentlyViewedObject;
+	}
+	Super::Tick(DeltaSeconds);
 }
 
 void AModularCharacter::UseItem(UItem* Item)
@@ -109,6 +130,32 @@ void AModularCharacter::ApplyRagdoll()
 	GetCharacterMovement()->DisableMovement();
 
 	SetLifeSpan(5.f);
+}
+
+void AModularCharacter::InteractWithActor(AActor* InteractableActor)
+{
+	if(InteractableActor != nullptr)
+	{
+		IInteractable::Execute_Interact(InteractableActor,this);
+	}
+}
+
+AActor* AModularCharacter::CastLineTrace()
+{
+	FHitResult HitResult;
+	FVector Start = Camera->GetComponentLocation();
+	FVector End = Camera->GetForwardVector() * 200 + Start;
+	if(UKismetSystemLibrary::LineTraceSingle(this, Start, End, TraceTypeQuery2, false, {}, EDrawDebugTrace::None, HitResult, true ))
+	{
+		if( HitResult.GetActor()->Implements<UInteractable>() )
+		{
+			if(IInteractable::Execute_CanBeInteractedWith(HitResult.GetActor(), this))
+			{
+				return HitResult.GetActor();
+			}
+		}
+	}
+	return nullptr;
 }
 
 void AModularCharacter::LeftMouseClick()
