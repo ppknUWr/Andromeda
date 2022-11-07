@@ -19,7 +19,7 @@
 AModularCharacter::AModularCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	//// BODY PARTS
 	BodyParts.Init(nullptr, GetBodyPartIndex(EBodyPart::COUNT));
@@ -145,7 +145,7 @@ AActor* AModularCharacter::CastLineTrace()
 	FHitResult HitResult;
 	FVector Start = Camera->GetComponentLocation();
 	FVector End = Camera->GetForwardVector() * 200 + Start;
-	if(UKismetSystemLibrary::LineTraceSingle(this, Start, End, TraceTypeQuery2, false, {}, EDrawDebugTrace::ForDuration, HitResult, true ))
+	if(UKismetSystemLibrary::LineTraceSingle(this, Start, End, TraceTypeQuery2, false, {}, EDrawDebugTrace::None, HitResult, true ))
 	{
 		if( HitResult.GetActor()->Implements<UInteractable>() )
 		{
