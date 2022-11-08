@@ -21,7 +21,10 @@ public:
 
 	virtual void BeginPlay() override;
 
+	UFUNCTION(BlueprintCallable)
 	bool AddItem(UItem* Item);
+
+	UFUNCTION(BlueprintCallable)
 	bool RemoveItem(UItem* Item);
 
 public:
