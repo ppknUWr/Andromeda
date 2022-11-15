@@ -126,7 +126,7 @@ void AModularCharacter::ApplyRagdoll()
 {
 	GetMesh()->SetSimulatePhysics(true);
 	GetMesh()->SetCollisionProfileName("Ragdoll");
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCharacterMovement()->DisableMovement();
 
 	SetLifeSpan(5.f);
@@ -160,12 +160,12 @@ AActor* AModularCharacter::CastLineTrace()
 
 void AModularCharacter::LeftMouseClick()
 {
-	if(Weapon->IsWeaponEquipped())
+	if(Weapon->IsWeaponEquipped() && CharacterState !=  ECharacterState::ATTACK)
 	{
 		Weapon->WeaponItem->LeftMousePressed(GetMesh());
 	}
 
-	if(Weapon->IsWeaponAtRest())
+	if(Weapon->IsWeaponAtRest()  && CharacterState !=  ECharacterState::EQUIP)
 	{
 		Weapon->EquipWeapon(this);
 	}

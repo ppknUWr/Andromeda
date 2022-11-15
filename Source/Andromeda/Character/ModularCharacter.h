@@ -75,9 +75,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UWeaponComponent* Weapon;
+	
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	ECharacterState CharacterState = ECharacterState::IDLE;
 
 	UFUNCTION(BlueprintCallable, Category = "Items")
 	void UseItem(UItem* Item);
+
 
 protected:
 
