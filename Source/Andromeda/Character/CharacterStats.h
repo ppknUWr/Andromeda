@@ -47,6 +47,18 @@ enum class EBodyPart : uint8
 	COUNT UMETA(Hidden)
 };
 
+UENUM(BlueprintType)
+enum class ECharacterState : uint8
+{
+	IDLE UMETA(DisplayName = "Idle"), 
+	ATTACK UMETA(DisplayName = "Attack"), 
+	DEFFEND UMETA(DisplayName = "Deffend"), 
+	GRAB UMETA(DisplayName = "Grab"), 
+	USE UMETA(DisplayName = "Use"), 
+	EQUIP UMETA(DisplayName = "Equip"), 
+	COUNT UMETA(Hidden)
+};
+
 inline int GetBodyPartIndex(EBodyPart BodyPart)
 {
 	return static_cast<int>(BodyPart);
