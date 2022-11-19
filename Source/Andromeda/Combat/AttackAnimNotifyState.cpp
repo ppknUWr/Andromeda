@@ -58,22 +58,19 @@ void UAttackAnimNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimS
 		{
 			IgnoreActors.AddUnique(HitResult.GetActor());
 
-			AController* Instigator = Cast<APawn>(Weapon->GetOwner())->GetController();
+			if(AModularCharacter* ModularCharacter = Cast<AModularCharacter>(MeshComp->GetOwner()))
+			{
+				AController* Instigator = ModularCharacter->GetController();
 			
-			UGameplayStatics::ApplyDamage(HitResult.GetActor(), Weapon->WeaponItem->Damage, Instigator, Weapon->GetOwner(), UDamageType::StaticClass());
+				UGameplayStatics::ApplyDamage(HitResult.GetActor(), Weapon->WeaponItem->Damage, Instigator, Weapon->GetOwner(), UDamageType::StaticClass());
 
-			//PrintInfo(HitResult.GetActor()->GetName());
-			//PrintInfo(HitResult.BoneName.ToString());
+				FName WeaponName = Weapon->WeaponItem->WeaponStatisticName;
 
-			ApplyExp(MeshComp);
+				ModularCharacter->SetWeaponStat(WeaponName, ModularCharacter->GetWeaponStat(WeaponName) + 20);
+
+				//PrintInfo(HitResult.GetActor()->GetName());
+				//PrintInfo(HitResult.BoneName.ToString());
+			}
 		}
 	}
-}
-
-void UAttackAnimNotifyState::ApplyExp(USkeletalMeshComponent* MeshComp)
-{
-	AModularCharacter* ModularCharacter = Cast<AModularCharacter>(MeshComp->GetOwner());
-	ModularCharacter->AddWeaponExp();
-	//PrintInfo(Weapon->WeaponItem->GetName() + " experience gained: "  + FString::SanitizeFloat(ModularCharacter->WeaponExpGain.Sword));
-	//PrintInfo("Player strengh experience gained: " + FString::SanitizeFloat(ModularCharacter->StatsEXP.Strength));
 }
