@@ -32,4 +32,7 @@ public:
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Interact(AModularCharacter* Character);
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+    void IsNoLongerLookedAt(AModularCharacter* Character);
 };

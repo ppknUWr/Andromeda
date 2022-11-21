@@ -9,6 +9,7 @@ UItem::UItem()
 	ItemDisplayName = FText::FromString("Item");
 	ItemDescription = FText::FromString("Basic Item Description");
 	Weight = 1.f;
+	ItemType = EItemType::OTHER;
 }
 
 void UItem::Use(class ACharacter* Character)
