@@ -8,6 +8,15 @@
 
 class UInventoryComponent;
 
+UENUM(BlueprintType)
+enum class EItemType : uint8
+{
+	WEAPON UMETA(DisplayName = "Weapon"),
+	RESOURCE UMETA(DisplayName = "Resource"),
+	POTION UMETA(DisplayName = "Potion"),
+	OTHER UMETA(DisplayName = "Other")
+};
+
 UCLASS(Abstract, BlueprintType, Blueprintable, EditInlineNew, DefaultToInstanced)
 class ANDROMEDA_API UItem : public UObject
 {
@@ -17,12 +26,19 @@ public:
 	
 	UItem();
 
-	virtual void Use(class ACharacter* Character) PURE_VIRTUAL(UItem, );
+	virtual class UWorld* GetWorld() const { return World; };
+
+	// Delete pure virtual for now.
+
+	virtual void Use(class ACharacter* Character);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnUse(class ACharacter* Character);
 
 public:
+
+	UPROPERTY(Transient)
+	class UWorld* World;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta=(GetOptions="GetActionText"))
 	FText UseActionText;
@@ -41,6 +57,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta = (ClampMin = 0.0))
 	float Weight;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
+	EItemType ItemType;
 
 	UPROPERTY()
 	UInventoryComponent* OwningInventory;

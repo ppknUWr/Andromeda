@@ -7,13 +7,19 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "../Equipment/Item.h"
+#include "../Equipment/InventoryComponent.h"
+#include "Andromeda/Interfaces/Interactable.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 
 // Sets default values
 AModularCharacter::AModularCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	//// BODY PARTS
 	BodyParts.Init(nullptr, GetBodyPartIndex(EBodyPart::COUNT));
@@ -28,7 +34,7 @@ AModularCharacter::AModularCharacter()
 	}
 
 	Weapon = CreateDefaultSubobject<UWeaponComponent>("Weapon");
-	Weapon->SetupAttachment(BodyParts[GetBodyPartIndex(EBodyPart::ARMS)], "RightHandSocket");
+	Weapon->SetupAttachment(GetMesh(), "LeftHipSocket");
 
 	
 	//// CAMERA
@@ -43,6 +49,9 @@ AModularCharacter::AModularCharacter()
 	GetMesh()->SetRelativeLocation(FVector(-20.f, 0.f, -90.f));
 	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 
+	//// INITIALIZE INVENTORY
+	Inventory = CreateDefaultSubobject<UInventoryComponent>("Inventory");
+	Inventory->Capacity = 20;
 	
 }
 
@@ -67,6 +76,8 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAxis("Turn Right / Left Mouse", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &APawn::AddControllerPitchInput);
+	
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AModularCharacter::Interact);
 
 	PlayerInputComponent->BindAction("LeftMouseClick", IE_Pressed, this, &AModularCharacter::LeftMouseClick);
 	
@@ -78,7 +89,7 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AModularCharacter::BeginCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AModularCharacter::EndCrouch);
-
+	
 }
 
 // Called when the game starts or when spawned
@@ -87,24 +98,121 @@ void AModularCharacter::BeginPlay()
 	Super::BeginPlay();
 }
 
+void AModularCharacter::Tick(float DeltaSeconds)
+{
+	AActor* CurrentlyViewedObject = CastLineTrace();
+
+	if( CurrentlyViewedObject != LastSeenInteractableObject)
+	{
+		if(LastSeenInteractableObject != nullptr)
+		{
+			IInteractable::Execute_IsNoLongerLookedAt(LastSeenInteractableObject, this);
+		}
+		LastSeenInteractableObject = CurrentlyViewedObject;
+	}
+	Super::Tick(DeltaSeconds);
+}
+
+void AModularCharacter::UseItem(UItem* Item)
+{
+	if (Item)
+	{
+		Item->Use(this);
+		Item->OnUse(this); // Blueprint event.
+	}
+}
+
 void AModularCharacter::ApplyRagdoll()
 {
 	GetMesh()->SetSimulatePhysics(true);
 	GetMesh()->SetCollisionProfileName("Ragdoll");
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCharacterMovement()->DisableMovement();
 
 	SetLifeSpan(5.f);
 }
 
-void AModularCharacter::LeftMouseClick()
+void AModularCharacter::InteractWithActor(AActor* InteractableActor)
 {
-	Weapon->WeaponItem->LeftMouseClick(GetMesh());
+	if(InteractableActor != nullptr)
+	{
+		IInteractable::Execute_Interact(InteractableActor,this);
+	}
 }
 
-void AModularCharacter::SetStat(float FCharacterStats::* StatsField, float Value)
+AActor* AModularCharacter::CastLineTrace()
+{
+	FHitResult HitResult;
+	FVector Start = Camera->GetComponentLocation();
+	FVector End = Camera->GetForwardVector() * 200 + Start;
+	if(UKismetSystemLibrary::LineTraceSingle(this, Start, End, TraceTypeQuery2, false, {}, EDrawDebugTrace::None, HitResult, true ))
+	{
+		if( HitResult.GetActor()->Implements<UInteractable>() )
+		{
+			if(IInteractable::Execute_CanBeInteractedWith(HitResult.GetActor(), this))
+			{
+				return HitResult.GetActor();
+			}
+		}
+	}
+	return nullptr;
+}
+
+void AModularCharacter::LeftMouseClick()
+{
+	if(Weapon->IsWeaponEquipped() && CharacterState !=  ECharacterState::ATTACK)
+	{
+		Weapon->WeaponItem->LeftMousePressed(GetMesh());
+	}
+
+	if(Weapon->IsWeaponAtRest()  && CharacterState !=  ECharacterState::EQUIP)
+	{
+		Weapon->EquipWeapon(this);
+	}
+}
+
+void AModularCharacter::LeftMouseRelease()
+{
+	Weapon->WeaponItem->LeftMouseReleased(GetMesh());
+}
+
+void AModularCharacter::SetCurrentStat(float FCharacterStats::* StatsField, float Value)
 {
 	CurrentsStats.*StatsField = Value;
+}
+void AModularCharacter::SetMaxStat(float FCharacterStats::* StatsField, float Value)
+{
+	MaxStats.*StatsField = Value;
+}
+void AModularCharacter::SetStatExp(float FCharacterStats::* StatsField, float Value)
+{
+	StatsEXP.*StatsField = Value;
+}
+void AModularCharacter::SetWeaponExp(float FWeaponExpGain::* WeaponField, float Value)
+{
+	WeaponExp.*WeaponField = Value;
+}
+void AModularCharacter::SetWeaponExpGained(float FWeaponExpGain::* WeaponField, float Value)
+{
+	WeaponExpGain.*WeaponField = Value;
+}
+
+void AModularCharacter::AddWeaponExp()
+{
+	float ExpGain = Weapon->WeaponItem->ExpGain;
+	SetStatExp(&FCharacterStats::Strength, StatsEXP.Strength + ExpGain);
+	
+	if (Weapon->WeaponItem->GetName().Contains("Sword")) {
+		SetWeaponExpGained(&FWeaponExpGain::Sword, WeaponExpGain.Sword + ExpGain);
+	} else if (Weapon->WeaponItem->GetName().Contains("Warhammer")) {
+		SetWeaponExpGained(&FWeaponExpGain::Warhammer, WeaponExpGain.Warhammer + ExpGain);
+	} else if (Weapon->WeaponItem->GetName().Contains("Bow")) {
+		SetWeaponExpGained(&FWeaponExpGain::Bow, WeaponExpGain.Bow + ExpGain);
+	} else if (Weapon->WeaponItem->GetName().Contains("Spear")) {
+		SetWeaponExpGained(&FWeaponExpGain::Spear, WeaponExpGain.Spear + ExpGain);
+	} else if (Weapon->WeaponItem->GetName().Contains("Shield")) {
+		SetWeaponExpGained(&FWeaponExpGain::Shield, WeaponExpGain.Shield + ExpGain);
+	} 
 }
 
 bool AModularCharacter::UseStamina(float StaminaToUse)
