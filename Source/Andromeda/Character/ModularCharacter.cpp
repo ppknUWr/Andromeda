@@ -167,7 +167,7 @@ void AModularCharacter::LeftMouseClick()
 
 	if(Weapon->IsWeaponAtRest()  && CharacterState !=  ECharacterState::EQUIP)
 	{
-		Weapon->EquipWeapon(this);
+		Weapon->PlayEquipAnimation(this);
 	}
 }
 

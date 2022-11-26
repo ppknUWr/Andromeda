@@ -11,11 +11,7 @@
 UWeaponComponent::UWeaponComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-
-	if(WeaponItem)
-	{
-		SetSkeletalMesh(WeaponItem->AttachMesh);
-	}
+	
 }
 
 
@@ -35,23 +31,34 @@ bool UWeaponComponent::IsWeaponEquipped()
 	return GetAttachSocketName() == WeaponItem->WeaponAttachSocket;
 }
 
-void UWeaponComponent::EquipWeapon(AModularCharacter* ModularCharacter)
+void UWeaponComponent::ChangeWeapon(UWeaponItem* NewWeapon)
 {
-	ModularCharacter->PlayAnimMontage(WeaponItem->EquipMontage);
+	if(NewWeapon == WeaponItem || NewWeapon == nullptr)
+	{
+		return;
+	}
+	
+	if(AModularCharacter* ModularCharacter = Cast<AModularCharacter>(GetOwner()))
+	{
+		WeaponItem = NewWeapon;
+		SetSkeletalMesh(WeaponItem->AttachMesh);
+		AttachToComponent(ModularCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponItem->WeaponRestSocket);
+		PlayEquipAnimation(ModularCharacter);
+	}
+	
+}
+
+void UWeaponComponent::PlayEquipAnimation(AModularCharacter* ModularCharacter)
+{
+	if(WeaponItem)
+	{
+		ModularCharacter->PlayAnimMontage(WeaponItem->EquipMontage);
+	}
 }
 
 // Called when the game starts
 void UWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if(WeaponItem)
-	{
-		SetSkeletalMesh(WeaponItem->AttachMesh);
-
-		if(AModularCharacter* ModularCharacter = Cast<AModularCharacter>(GetOwner()))
-		{
-			AttachToComponent(ModularCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponItem->WeaponRestSocket);
-		}
-	}
+	
 }

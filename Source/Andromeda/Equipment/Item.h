@@ -6,7 +6,10 @@
 #include "UObject/NoExportTypes.h"
 #include "Item.generated.h"
 
+
+class AModularCharacter;
 class UInventoryComponent;
+
 
 UENUM(BlueprintType)
 enum class EItemType : uint8
@@ -26,23 +29,26 @@ public:
 	
 	UItem();
 
-	virtual class UWorld* GetWorld() const { return World; };
+	virtual UWorld* GetWorld() const { return World; };
 
 	// Delete pure virtual for now.
 
-	virtual void Use(class ACharacter* Character);
+	virtual void Use(AModularCharacter* Character);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnUse(class ACharacter* Character);
+	void OnUse(AModularCharacter* Character);
 
 public:
 
 	UPROPERTY(Transient)
-	class UWorld* World;
+	UWorld* World;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta=(GetOptions="GetActionText"))
 	FText UseActionText;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
+	EItemType ItemType;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
 	UStaticMesh* PickupMesh;
 
@@ -57,9 +63,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta = (ClampMin = 0.0))
 	float Weight;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
-	EItemType ItemType;
 
 	UPROPERTY()
 	UInventoryComponent* OwningInventory;
