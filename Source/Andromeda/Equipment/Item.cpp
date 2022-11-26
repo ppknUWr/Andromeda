@@ -2,6 +2,7 @@
 
 
 #include "Item.h"
+#include "../Character/ModularCharacter.h"
 
 UItem::UItem()
 {
@@ -12,7 +13,7 @@ UItem::UItem()
 	ItemType = EItemType::OTHER;
 }
 
-void UItem::Use(class ACharacter* Character)
+void UItem::Use(AModularCharacter* Character)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Blue, "Item used");
 }
