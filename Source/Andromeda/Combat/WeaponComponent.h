@@ -19,16 +19,20 @@ public:
 	// Sets default values for this component's properties
 	UWeaponComponent();
 	
-	UPROPERTY(EditAnywhere, Instanced)
-	UWeaponItem* WeaponItem;
+	UPROPERTY(EditAnywhere)
+	UWeaponItem* WeaponItem = nullptr;
 
 	UFUNCTION(BlueprintPure)
 	bool IsWeaponAtRest();
 
 	UFUNCTION(BlueprintPure)
 	bool IsWeaponEquipped();
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeWeapon(UWeaponItem* NewWeapon);
 	
-	void EquipWeapon(AModularCharacter* ModularCharacter);
+	void PlayEquipAnimation(AModularCharacter* ModularCharacter);
+	
 
 
 protected:

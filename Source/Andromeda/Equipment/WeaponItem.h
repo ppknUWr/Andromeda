@@ -20,6 +20,8 @@ class ANDROMEDA_API UWeaponItem : public UItem
 	GENERATED_BODY()
 public:
 
+	virtual void Use(AModularCharacter* Character) override;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta = (ClampMin = 0.0))
 	float Damage;
 	
