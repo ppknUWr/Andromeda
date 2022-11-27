@@ -53,6 +53,9 @@ AModularCharacter::AModularCharacter()
 	Inventory = CreateDefaultSubobject<UInventoryComponent>("Inventory");
 	Inventory->Capacity = 20;
 	
+	for(FName WeaponStatName : UWeaponItem::GetWeapons())
+		WeaponsStats.FindOrAdd(WeaponStatName, 0);
+
 }
 
 float AModularCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -188,31 +191,21 @@ void AModularCharacter::SetStatExp(float FCharacterStats::* StatsField, float Va
 {
 	StatsEXP.*StatsField = Value;
 }
-void AModularCharacter::SetWeaponExp(float FWeaponExpGain::* WeaponField, float Value)
+
+void AModularCharacter::SetWeaponStat(FName StatName, float Value)
 {
-	WeaponExp.*WeaponField = Value;
-}
-void AModularCharacter::SetWeaponExpGained(float FWeaponExpGain::* WeaponField, float Value)
-{
-	WeaponExpGain.*WeaponField = Value;
+	if(!WeaponsStats.Contains(StatName))
+		return;
+	
+	WeaponsStats[StatName] = Value;
 }
 
-void AModularCharacter::AddWeaponExp()
+float AModularCharacter::GetWeaponStat(FName StatName)
 {
-	float ExpGain = Weapon->WeaponItem->ExpGain;
-	SetStatExp(&FCharacterStats::Strength, StatsEXP.Strength + ExpGain);
+	if(!WeaponsStats.Contains(StatName))
+		return 0;
 	
-	if (Weapon->WeaponItem->GetName().Contains("Sword")) {
-		SetWeaponExpGained(&FWeaponExpGain::Sword, WeaponExpGain.Sword + ExpGain);
-	} else if (Weapon->WeaponItem->GetName().Contains("Warhammer")) {
-		SetWeaponExpGained(&FWeaponExpGain::Warhammer, WeaponExpGain.Warhammer + ExpGain);
-	} else if (Weapon->WeaponItem->GetName().Contains("Bow")) {
-		SetWeaponExpGained(&FWeaponExpGain::Bow, WeaponExpGain.Bow + ExpGain);
-	} else if (Weapon->WeaponItem->GetName().Contains("Spear")) {
-		SetWeaponExpGained(&FWeaponExpGain::Spear, WeaponExpGain.Spear + ExpGain);
-	} else if (Weapon->WeaponItem->GetName().Contains("Shield")) {
-		SetWeaponExpGained(&FWeaponExpGain::Shield, WeaponExpGain.Shield + ExpGain);
-	} 
+	return WeaponsStats[StatName];
 }
 
 bool AModularCharacter::UseStamina(float StaminaToUse)

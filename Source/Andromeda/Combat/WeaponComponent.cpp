@@ -41,9 +41,11 @@ void UWeaponComponent::ChangeWeapon(UWeaponItem* NewWeapon)
 	if(AModularCharacter* ModularCharacter = Cast<AModularCharacter>(GetOwner()))
 	{
 		WeaponItem = NewWeapon;
+		const FName NewWeaponAttachSocket = IsWeaponEquipped() ? WeaponItem->WeaponAttachSocket : WeaponItem->WeaponRestSocket;
+		
 		SetSkeletalMesh(WeaponItem->AttachMesh);
-		AttachToComponent(ModularCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponItem->WeaponRestSocket);
-		PlayEquipAnimation(ModularCharacter);
+		AttachToComponent(ModularCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, NewWeaponAttachSocket);
+		//PlayEquipAnimation(ModularCharacter);
 	}
 	
 }
