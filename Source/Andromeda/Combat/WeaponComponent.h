@@ -6,6 +6,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "WeaponComponent.generated.h"
 
+class AModularCharacter;
 class UWeaponItem;
 
 
@@ -17,9 +18,22 @@ class ANDROMEDA_API UWeaponComponent : public USkeletalMeshComponent
 public:
 	// Sets default values for this component's properties
 	UWeaponComponent();
+	
+	UPROPERTY(EditAnywhere)
+	UWeaponItem* WeaponItem = nullptr;
 
-	UPROPERTY(EditAnywhere, Instanced)
-	UWeaponItem* WeaponItem;
+	UFUNCTION(BlueprintPure)
+	bool IsWeaponAtRest();
+
+	UFUNCTION(BlueprintPure)
+	bool IsWeaponEquipped();
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeWeapon(UWeaponItem* NewWeapon);
+	
+	void PlayEquipAnimation(AModularCharacter* ModularCharacter);
+	
+
 
 protected:
 	// Called when the game starts

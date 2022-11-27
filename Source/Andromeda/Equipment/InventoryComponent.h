@@ -21,7 +21,10 @@ public:
 
 	virtual void BeginPlay() override;
 
+	UFUNCTION(BlueprintCallable)
 	bool AddItem(UItem* Item);
+
+	UFUNCTION(BlueprintCallable)
 	bool RemoveItem(UItem* Item);
 
 public:
@@ -35,7 +38,7 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Inventory")
 	FOnInventoryUpdated OnInventoryUpdated;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Items")
 	TArray<UItem*> Items;
 	
 };
