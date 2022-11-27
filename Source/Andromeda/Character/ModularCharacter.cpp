@@ -7,8 +7,9 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
-#include "../Equipment/Item.h"
-#include "../Equipment/InventoryComponent.h"
+#include "Andromeda/Equipment/Item.h"
+#include "Andromeda/Equipment/InventoryComponent.h"
+#include "Andromeda/Equipment/Coins.h"
 #include "Andromeda/Interfaces/Interactable.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -52,6 +53,9 @@ AModularCharacter::AModularCharacter()
 	//// INITIALIZE INVENTORY
 	Inventory = CreateDefaultSubobject<UInventoryComponent>("Inventory");
 	Inventory->Capacity = 20;
+
+	//// INITIALIZE COINS
+	Coins = CreateDefaultSubobject<UCoins>("Coins");
 	
 	for(FName WeaponStatName : UWeaponItem::GetWeapons())
 		WeaponsStats.FindOrAdd(WeaponStatName, 0);
