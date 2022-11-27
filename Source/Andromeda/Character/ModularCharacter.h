@@ -46,19 +46,21 @@ public:
 	FCharacterStats MaxStats;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FCharacterStats StatsEXP;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	FWeaponExpGain WeaponExpGain;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	FWeaponExpGain WeaponExp;
-
+	
 	void SetCurrentStat(float FCharacterStats::* StatsField, float Value);
 	void SetMaxStat(float FCharacterStats::* StatsField, float Value);
 	void SetStatExp(float FCharacterStats::* StatsField, float Value);
-	void SetWeaponExp(float FWeaponExpGain::* StatsField, float Value);
-	void SetWeaponExpGained(float FWeaponExpGain::* StatsField, float Value);
-	void AddWeaponExp();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TMap<FName, float> WeaponsStats;
 
+	UFUNCTION(BlueprintCallable)
+	void SetWeaponStat(FName StatName, float Value);
+
+	UFUNCTION(BlueprintPure)
+	float GetWeaponStat(FName StatName);
+
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAcess = "true"))
 	UInventoryComponent* Inventory;
 
