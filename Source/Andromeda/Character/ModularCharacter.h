@@ -13,7 +13,7 @@
 class UItem;
 class UInventoryComponent;
 class UWeaponComponent;
-
+class UCoins;
 
 UCLASS(Abstract)
 class ANDROMEDA_API AModularCharacter : public ACharacter
@@ -63,6 +63,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAcess = "true"))
 	UInventoryComponent* Inventory;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Coins", meta = (AllowPrivateAcess = "true"))
+	UCoins* Coins;
 
 	void SetStat(float FCharacterStats::* StatsField, float Value);
 
