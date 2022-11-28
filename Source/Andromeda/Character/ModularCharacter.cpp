@@ -7,8 +7,9 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
-#include "../Equipment/Item.h"
-#include "../Equipment/InventoryComponent.h"
+#include "Andromeda/Equipment/Item.h"
+#include "Andromeda/Equipment/InventoryComponent.h"
+#include "Andromeda/Equipment/Coins.h"
 #include "Andromeda/Interfaces/Interactable.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -59,7 +60,13 @@ AModularCharacter::AModularCharacter()
 	//// INITIALIZE INVENTORY
 	Inventory = CreateDefaultSubobject<UInventoryComponent>("Inventory");
 	Inventory->Capacity = 20;
+
+	//// INITIALIZE COINS
+	Coins = CreateDefaultSubobject<UCoins>("Coins");
 	
+	for(FName WeaponStatName : UWeaponItem::GetWeapons())
+		WeaponsStats.FindOrAdd(WeaponStatName, 0);
+
 }
 
 
@@ -136,7 +143,7 @@ void AModularCharacter::ApplyRagdoll()
 {
 	GetMesh()->SetSimulatePhysics(true);
 	GetMesh()->SetCollisionProfileName("Ragdoll");
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCharacterMovement()->DisableMovement();
 
 	SetLifeSpan(5.f);
@@ -170,14 +177,14 @@ AActor* AModularCharacter::CastLineTrace()
 
 void AModularCharacter::LeftMouseClick()
 {
-	if(Weapon->IsWeaponEquipped())
+	if(Weapon->IsWeaponEquipped() && CharacterState !=  ECharacterState::ATTACK)
 	{
 		Weapon->WeaponItem->LeftMousePressed(GetMesh());
 	}
 
-	if(Weapon->IsWeaponAtRest())
+	if(Weapon->IsWeaponAtRest()  && CharacterState !=  ECharacterState::EQUIP)
 	{
-		Weapon->EquipWeapon(this);
+		Weapon->PlayEquipAnimation(this);
 	}
 }
 
@@ -222,31 +229,21 @@ void AModularCharacter::SetStatExp(float FCharacterStats::* StatsField, float Va
 {
 	StatsEXP.*StatsField = Value;
 }
-void AModularCharacter::SetWeaponExp(float FWeaponExpGain::* WeaponField, float Value)
+
+void AModularCharacter::SetWeaponStat(FName StatName, float Value)
 {
-	WeaponExp.*WeaponField = Value;
-}
-void AModularCharacter::SetWeaponExpGained(float FWeaponExpGain::* WeaponField, float Value)
-{
-	WeaponExpGain.*WeaponField = Value;
+	if(!WeaponsStats.Contains(StatName))
+		return;
+	
+	WeaponsStats[StatName] = Value;
 }
 
-void AModularCharacter::AddWeaponExp()
+float AModularCharacter::GetWeaponStat(FName StatName)
 {
-	float ExpGain = Weapon->WeaponItem->ExpGain;
-	SetStatExp(&FCharacterStats::Strength, StatsEXP.Strength + ExpGain);
+	if(!WeaponsStats.Contains(StatName))
+		return 0;
 	
-	if (Weapon->WeaponItem->GetName().Contains("Sword")) {
-		SetWeaponExpGained(&FWeaponExpGain::Sword, WeaponExpGain.Sword + ExpGain);
-	} else if (Weapon->WeaponItem->GetName().Contains("Warhammer")) {
-		SetWeaponExpGained(&FWeaponExpGain::Warhammer, WeaponExpGain.Warhammer + ExpGain);
-	} else if (Weapon->WeaponItem->GetName().Contains("Bow")) {
-		SetWeaponExpGained(&FWeaponExpGain::Bow, WeaponExpGain.Bow + ExpGain);
-	} else if (Weapon->WeaponItem->GetName().Contains("Spear")) {
-		SetWeaponExpGained(&FWeaponExpGain::Spear, WeaponExpGain.Spear + ExpGain);
-	} else if (Weapon->WeaponItem->GetName().Contains("Shield")) {
-		SetWeaponExpGained(&FWeaponExpGain::Shield, WeaponExpGain.Shield + ExpGain);
-	} 
+	return WeaponsStats[StatName];
 }
 
 bool AModularCharacter::UseStamina(float StaminaToUse)

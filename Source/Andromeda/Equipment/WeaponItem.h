@@ -20,6 +20,8 @@ class ANDROMEDA_API UWeaponItem : public UItem
 	GENERATED_BODY()
 public:
 
+	virtual void Use(AModularCharacter* Character) override;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta = (ClampMin = 0.0))
 	float Damage;
 	
@@ -31,6 +33,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item", meta=(GetOptions="GetWeaponRestSocket"))
 	FName WeaponRestSocket;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item", meta=(GetOptions="GetWeapons"))
+	FName WeaponStatisticName;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	USkeletalMesh* AttachMesh;
@@ -63,5 +68,12 @@ private:
 	TArray<FName> GetWeaponRestSocket()
 	{
 		return {"RightHipSocket", "LeftHipSocket", "BackSocket"};
+	}
+
+public:
+	UFUNCTION()
+	static TArray<FName> GetWeapons()
+	{
+		return {"Sword", "Warhammer", "Bow", "Spear", "Shield"};
 	}
 };

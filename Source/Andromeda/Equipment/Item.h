@@ -6,7 +6,19 @@
 #include "UObject/NoExportTypes.h"
 #include "Item.generated.h"
 
+
+class AModularCharacter;
 class UInventoryComponent;
+
+
+UENUM(BlueprintType)
+enum class EItemType : uint8
+{
+	WEAPON UMETA(DisplayName = "Weapon"),
+	RESOURCE UMETA(DisplayName = "Resource"),
+	POTION UMETA(DisplayName = "Potion"),
+	OTHER UMETA(DisplayName = "Other")
+};
 
 UCLASS(Abstract, BlueprintType, Blueprintable, EditInlineNew, DefaultToInstanced)
 class ANDROMEDA_API UItem : public UObject
@@ -17,23 +29,26 @@ public:
 	
 	UItem();
 
-	virtual class UWorld* GetWorld() const { return World; };
+	virtual UWorld* GetWorld() const { return World; };
 
 	// Delete pure virtual for now.
 
-	virtual void Use(class ACharacter* Character);
+	virtual void Use(AModularCharacter* Character);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnUse(class ACharacter* Character);
+	void OnUse(AModularCharacter* Character);
 
 public:
 
 	UPROPERTY(Transient)
-	class UWorld* World;
+	UWorld* World;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta=(GetOptions="GetActionText"))
 	FText UseActionText;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
+	EItemType ItemType;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
 	UStaticMesh* PickupMesh;
 

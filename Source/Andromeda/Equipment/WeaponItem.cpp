@@ -2,3 +2,12 @@
 
 
 #include "WeaponItem.h"
+#include "Andromeda/Character/ModularCharacter.h"
+#include "Andromeda/Combat/WeaponComponent.h"
+
+void UWeaponItem::Use(AModularCharacter* Character)
+{
+	Super::Use(Character);
+
+	Character->Weapon->ChangeWeapon(this);
+}
