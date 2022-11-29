@@ -71,7 +71,7 @@ private:
 	}
 
 public:
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	static TArray<FName> GetWeapons()
 	{
 		return {"Sword", "Warhammer", "Bow", "Spear", "Shield"};
