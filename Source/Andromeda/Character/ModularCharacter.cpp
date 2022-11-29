@@ -106,7 +106,9 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AModularCharacter::EndCrouch);
 	
 	PlayerInputComponent->BindAction("ZoomIn", IE_Pressed, this, &AModularCharacter::ZoomIn);
-	PlayerInputComponent->BindAction("ZoomOut", IE_Released, this, &AModularCharacter::ZoomOut);
+	PlayerInputComponent->BindAction("ZoomIn", IE_Repeat, this, &AModularCharacter::ZoomIn);
+	PlayerInputComponent->BindAction("ZoomOut", IE_Pressed, this, &AModularCharacter::ZoomOut);
+	PlayerInputComponent->BindAction("ZoomOut", IE_Repeat, this, &AModularCharacter::ZoomOut);
 }
 
 // Called when the game starts or when spawned
