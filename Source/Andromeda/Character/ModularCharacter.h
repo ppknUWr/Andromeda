@@ -39,6 +39,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class UCameraComponent* Camera;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	class USpringArmComponent* SpringArm;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FCharacterStats CurrentsStats;
@@ -102,7 +105,9 @@ protected:
 	
 	float WalkSpeed = 600;
 	float SprintSpeed = 1100;
-	
+
+	void ZoomIn();
+	void ZoomOut();
 
 
 public:

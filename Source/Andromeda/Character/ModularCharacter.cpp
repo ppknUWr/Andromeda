@@ -13,6 +13,7 @@
 #include "Andromeda/Interfaces/Interactable.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 
@@ -37,6 +38,12 @@ AModularCharacter::AModularCharacter()
 	Weapon = CreateDefaultSubobject<UWeaponComponent>("Weapon");
 	Weapon->SetupAttachment(GetMesh(), "LeftHipSocket");
 
+	//// SPRING ARM
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
+	SpringArm->SetupAttachment(GetCapsuleComponent());
+	SpringArm->TargetArmLength = 150.f;
+	SpringArm->TargetOffset = FVector(0.f, 45.f, 30.f);
+	
 	
 	//// CAMERA
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
@@ -61,6 +68,7 @@ AModularCharacter::AModularCharacter()
 		WeaponsStats.FindOrAdd(WeaponStatName, 0);
 
 }
+
 
 float AModularCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
@@ -97,6 +105,8 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AModularCharacter::BeginCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AModularCharacter::EndCrouch);
 	
+	PlayerInputComponent->BindAction("ZoomIn", IE_Pressed, this, &AModularCharacter::ZoomIn);
+	PlayerInputComponent->BindAction("ZoomOut", IE_Released, this, &AModularCharacter::ZoomOut);
 }
 
 // Called when the game starts or when spawned
@@ -181,6 +191,30 @@ void AModularCharacter::LeftMouseClick()
 void AModularCharacter::LeftMouseRelease()
 {
 	Weapon->WeaponItem->LeftMouseReleased(GetMesh());
+}
+
+void AModularCharacter::ZoomIn()
+{
+	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength - 10.f, 150.f, 450.f);
+	if (SpringArm->TargetArmLength == 150.f)
+	{
+		Camera->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "head");
+		Camera->SetRelativeLocation(FVector(5.f, 15.f, 0.f));
+		Camera->bUsePawnControlRotation = true;
+		SpringArm->bUsePawnControlRotation = false;
+	}
+}
+
+void AModularCharacter::ZoomOut()
+{
+	if (SpringArm->TargetArmLength == 150.f)
+	{
+		Camera->AttachToComponent(SpringArm, FAttachmentTransformRules::SnapToTargetIncludingScale);
+		Camera->bUsePawnControlRotation = false;
+		SpringArm->bUsePawnControlRotation = true;
+	}
+	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength + 10.f, 150.f, 450.f);
+
 }
 
 void AModularCharacter::SetCurrentStat(float FCharacterStats::* StatsField, float Value)
