@@ -2,9 +2,9 @@
 
 
 #include "EquipWeaponNotify.h"
-#include "WeaponComponent.h"
+#include "Andromeda/Components/WeaponComponent.h"
 #include "Andromeda/Character/ModularCharacter.h"
-#include "Andromeda/Equipment/WeaponItem.h"
+#include "Andromeda/Items/WeaponItem.h"
 
 
 UEquipWeaponNotify::UEquipWeaponNotify()

@@ -2,7 +2,7 @@
 
 
 #include "InventoryComponent.h"
-#include "Item.h"
+#include "Andromeda/Items/Item.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()

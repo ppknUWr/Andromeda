@@ -2,13 +2,9 @@
 
 
 #include "AttackAnimNotifyState.h"
-
-#include <string>
-
-#include "WeaponComponent.h"
-
+#include "Andromeda/Components/WeaponComponent.h"
 #include "Andromeda/Character/ModularCharacter.h"
-#include "Andromeda/Equipment/WeaponItem.h"
+#include "Andromeda/Items/WeaponItem.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"

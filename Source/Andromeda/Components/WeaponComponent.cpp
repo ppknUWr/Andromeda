@@ -3,8 +3,7 @@
 
 #include "WeaponComponent.h"
 #include "Andromeda/Character/ModularCharacter.h"
-
-#include "Andromeda/Equipment/WeaponItem.h"
+#include "Andromeda/Items/WeaponItem.h"
 
 
 // Sets default values for this component's properties

@@ -3,9 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Andromeda/Interfaces/Interactable.h"
 #include "CharacterStats.h"
-#include "Andromeda/Equipment/WeaponItem.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ModularCharacter.generated.h"
