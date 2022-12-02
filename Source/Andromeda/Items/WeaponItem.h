@@ -42,6 +42,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	UAnimMontage* EquipMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	UAnimMontage* AttackMontage;
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void LeftMousePressed(USkeletalMeshComponent* MeshComponent);
@@ -55,17 +58,21 @@ public:
     UFUNCTION(BlueprintImplementableEvent)
     void RightMouseReleased(USkeletalMeshComponent* MeshComponent);
 
+	void AttackWithCombo(USkeletalMeshComponent* MeshComponent);
+
 private:
 
+	int32 ComboCounter = 0;
+
 	UFUNCTION()
-	TArray<FName> GetWeaponAttachSocket()
+	static TArray<FName> GetWeaponAttachSocket()
 	{
 		return {"RightHandSocket", "LeftHandSocket"};
 	}
 	
 	//todo: Maybe we can make rest sockets customizable by player
 	UFUNCTION()
-	TArray<FName> GetWeaponRestSocket()
+	static TArray<FName> GetWeaponRestSocket()
 	{
 		return {"RightHipSocket", "LeftHipSocket", "BackSocket"};
 	}

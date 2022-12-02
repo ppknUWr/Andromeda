@@ -13,6 +13,8 @@ class UInventoryComponent;
 class UWeaponComponent;
 class UCoins;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnButtonClicked, EInputEvent, InputEvent);
+
 UCLASS(Abstract)
 class ANDROMEDA_API AModularCharacter : public ACharacter
 {
@@ -84,6 +86,12 @@ public:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	ECharacterState CharacterState = ECharacterState::IDLE;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnButtonClicked OnLeftMouseButtonClicked;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnButtonClicked OnRightMouseButtonClicked;
+	
 	UFUNCTION(BlueprintCallable, Category = "Items")
 	void UseItem(UItem* Item);
 

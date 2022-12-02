@@ -179,6 +179,8 @@ AActor* AModularCharacter::CastLineTrace()
 
 void AModularCharacter::LeftMouseClick()
 {
+	OnLeftMouseButtonClicked.Broadcast(IE_Pressed);
+	
 	if(Weapon->IsWeaponEquipped() && CharacterState !=  ECharacterState::ATTACK)
 	{
 		Weapon->WeaponItem->LeftMousePressed(GetMesh());
