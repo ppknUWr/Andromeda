@@ -24,7 +24,7 @@ void UAttackAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnim
 	if(AModularCharacter* ModularCharacter = Cast<AModularCharacter>(MeshComp->GetOwner()))
 	{
 		Weapon = ModularCharacter->Weapon;
-		TraceSockets = Weapon->SkeletalMesh->GetActiveSocketList();// collect all sockets
+		TraceSockets = Weapon->IsWeaponValid() ? Weapon->SkeletalMesh->GetActiveSocketList() : TArray<USkeletalMeshSocket*>();// collect all sockets
 		
 		for(int i = 0; i < TraceSockets.Num(); i++)
 		{

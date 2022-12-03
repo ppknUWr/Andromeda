@@ -38,5 +38,8 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-	
+
+public:
+
+	FORCEINLINE bool IsWeaponValid() const { return (WeaponItem != nullptr); }
 };

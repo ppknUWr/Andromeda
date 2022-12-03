@@ -24,7 +24,7 @@ public:
 	UPROPERTY()
 	TArray<AActor*> IgnoreActors;
 
-	UPROPERTY()
+
 	TArray<USkeletalMeshSocket*> TraceSockets;
 	
 	UPROPERTY()

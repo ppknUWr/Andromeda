@@ -43,7 +43,7 @@ public:
 	UPROPERTY(Transient)
 	UWorld* World;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta=(GetOptions="GetActionText"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta=(GetOptions="GetActionText"), Category="Item")
 	FText UseActionText;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")

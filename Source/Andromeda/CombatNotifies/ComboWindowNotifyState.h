@@ -7,7 +7,7 @@
 #include "ComboWindowNotifyState.generated.h"
 
 class AModularCharacter;
-class UWeaponItem;
+class USideArmsWeaponItem;
 
 /**
  * 
@@ -25,9 +25,15 @@ public:
 	AModularCharacter* ModularCharacter;
 
 	UPROPERTY()
-	UWeaponItem* WeaponItem;
+	USideArmsWeaponItem* WeaponItem;
 
+	UPROPERTY(EditAnywhere)
+	bool bIsLastAttack = false;
+
+	UPROPERTY()
+	bool bComboTriggered = false;
+	
 	UFUNCTION()
-	void BindCombo(EInputEvent InputEvent);
+	void PerformCombo(EInputEvent InputEvent);
 	
 };

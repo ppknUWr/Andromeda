@@ -5,9 +5,9 @@
 
 #include "Andromeda/Character/ModularCharacter.h"
 #include "Andromeda/Components/WeaponComponent.h"
-#include "Andromeda/Items/WeaponItem.h"
+#include "Andromeda/Items/SideArmsWeaponItem.h"
 
-#define PrintInfo(String) GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Blue, String)
+#define PrintInfo(String) GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Blue, String)
 
 void UComboWindowNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
@@ -17,8 +17,12 @@ void UComboWindowNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAni
 	
 	if(ModularCharacter != nullptr)
 	{
-		WeaponItem = ModularCharacter->Weapon->WeaponItem;
-		ModularCharacter->OnLeftMouseButtonClicked.AddDynamic(this, &UComboWindowNotifyState::BindCombo);
+		WeaponItem = Cast<USideArmsWeaponItem>(ModularCharacter->Weapon->WeaponItem);
+
+		if(!bIsLastAttack)
+		{
+			ModularCharacter->OnLeftMouseButtonClicked.AddDynamic(this, &UComboWindowNotifyState::PerformCombo);
+		}
 	}
 }
 
@@ -28,15 +32,24 @@ void UComboWindowNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimS
 
 	if(ModularCharacter)
 	{
-		ModularCharacter->OnLeftMouseButtonClicked.RemoveDynamic(this,  &UComboWindowNotifyState::BindCombo);
+		ModularCharacter->OnLeftMouseButtonClicked.RemoveDynamic(this,  &UComboWindowNotifyState::PerformCombo);
+
+		if(bComboTriggered)
+		{
+			WeaponItem->AttackWithCombo(ModularCharacter->GetMesh());
+		}
+		
+		if(!bComboTriggered || bIsLastAttack)
+		{
+			WeaponItem->ComboCounter = 0;
+		}
 	}
 }
 
-void UComboWindowNotifyState::BindCombo(EInputEvent InputEvent)
+void UComboWindowNotifyState::PerformCombo(EInputEvent InputEvent)
 {
 	if(InputEvent == IE_Pressed)
 	{
-		PrintInfo("FunctionCalled");
-		WeaponItem->AttackWithCombo(ModularCharacter->GetMesh());
+		bComboTriggered = true;
 	}
 }
