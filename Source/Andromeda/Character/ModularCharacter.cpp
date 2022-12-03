@@ -2,16 +2,18 @@
 
 
 #include "ModularCharacter.h"
-#include "Andromeda/Combat/WeaponComponent.h"
-#include "Andromeda/Equipment/WeaponItem.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
-#include "../Equipment/Item.h"
-#include "../Equipment/InventoryComponent.h"
-#include "Andromeda/Interfaces/Interactable.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Andromeda/Components/InventoryComponent.h"
+#include "Andromeda/Components/WeaponComponent.h"
+#include "Andromeda/Items/WeaponItem.h"
+#include "Andromeda/Items/Item.h"
+#include "Andromeda/Items/Coins.h"
+#include "Andromeda/Interfaces/Interactable.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 
@@ -36,6 +38,12 @@ AModularCharacter::AModularCharacter()
 	Weapon = CreateDefaultSubobject<UWeaponComponent>("Weapon");
 	Weapon->SetupAttachment(GetMesh(), "LeftHipSocket");
 
+	//// SPRING ARM
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
+	SpringArm->SetupAttachment(GetCapsuleComponent());
+	SpringArm->TargetArmLength = 150.f;
+	SpringArm->TargetOffset = FVector(0.f, 45.f, 30.f);
+	
 	
 	//// CAMERA
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
@@ -52,8 +60,15 @@ AModularCharacter::AModularCharacter()
 	//// INITIALIZE INVENTORY
 	Inventory = CreateDefaultSubobject<UInventoryComponent>("Inventory");
 	Inventory->Capacity = 20;
+
+	//// INITIALIZE COINS
+	Coins = CreateDefaultSubobject<UCoins>("Coins");
 	
+	for(FName WeaponStatName : UWeaponItem::GetWeapons())
+		WeaponsStats.FindOrAdd(WeaponStatName, 0);
+
 }
+
 
 float AModularCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
@@ -90,6 +105,10 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AModularCharacter::BeginCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AModularCharacter::EndCrouch);
 	
+	PlayerInputComponent->BindAction("ZoomIn", IE_Pressed, this, &AModularCharacter::ZoomIn);
+	PlayerInputComponent->BindAction("ZoomIn", IE_Repeat, this, &AModularCharacter::ZoomIn);
+	PlayerInputComponent->BindAction("ZoomOut", IE_Pressed, this, &AModularCharacter::ZoomOut);
+	PlayerInputComponent->BindAction("ZoomOut", IE_Repeat, this, &AModularCharacter::ZoomOut);
 }
 
 // Called when the game starts or when spawned
@@ -160,6 +179,8 @@ AActor* AModularCharacter::CastLineTrace()
 
 void AModularCharacter::LeftMouseClick()
 {
+	OnLeftMouseButtonClicked.Broadcast(IE_Pressed);
+	
 	if(Weapon->IsWeaponEquipped() && CharacterState !=  ECharacterState::ATTACK)
 	{
 		Weapon->WeaponItem->LeftMousePressed(GetMesh());
@@ -167,13 +188,37 @@ void AModularCharacter::LeftMouseClick()
 
 	if(Weapon->IsWeaponAtRest()  && CharacterState !=  ECharacterState::EQUIP)
 	{
-		Weapon->EquipWeapon(this);
+		Weapon->PlayEquipAnimation(this);
 	}
 }
 
 void AModularCharacter::LeftMouseRelease()
 {
 	Weapon->WeaponItem->LeftMouseReleased(GetMesh());
+}
+
+void AModularCharacter::ZoomIn()
+{
+	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength - 10.f, 150.f, 450.f);
+	if (SpringArm->TargetArmLength == 150.f)
+	{
+		Camera->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "head");
+		Camera->SetRelativeLocation(FVector(5.f, 15.f, 0.f));
+		Camera->bUsePawnControlRotation = true;
+		SpringArm->bUsePawnControlRotation = false;
+	}
+}
+
+void AModularCharacter::ZoomOut()
+{
+	if (SpringArm->TargetArmLength == 150.f)
+	{
+		Camera->AttachToComponent(SpringArm, FAttachmentTransformRules::SnapToTargetIncludingScale);
+		Camera->bUsePawnControlRotation = false;
+		SpringArm->bUsePawnControlRotation = true;
+	}
+	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength + 10.f, 150.f, 450.f);
+
 }
 
 void AModularCharacter::SetCurrentStat(float FCharacterStats::* StatsField, float Value)
@@ -188,31 +233,21 @@ void AModularCharacter::SetStatExp(float FCharacterStats::* StatsField, float Va
 {
 	StatsEXP.*StatsField = Value;
 }
-void AModularCharacter::SetWeaponExp(float FWeaponExpGain::* WeaponField, float Value)
+
+void AModularCharacter::SetWeaponStat(FName StatName, float Value)
 {
-	WeaponExp.*WeaponField = Value;
-}
-void AModularCharacter::SetWeaponExpGained(float FWeaponExpGain::* WeaponField, float Value)
-{
-	WeaponExpGain.*WeaponField = Value;
+	if(!WeaponsStats.Contains(StatName))
+		return;
+	
+	WeaponsStats[StatName] = Value;
 }
 
-void AModularCharacter::AddWeaponExp()
+float AModularCharacter::GetWeaponStat(FName StatName)
 {
-	float ExpGain = Weapon->WeaponItem->ExpGain;
-	SetStatExp(&FCharacterStats::Strength, StatsEXP.Strength + ExpGain);
+	if(!WeaponsStats.Contains(StatName))
+		return 0;
 	
-	if (Weapon->WeaponItem->GetName().Contains("Sword")) {
-		SetWeaponExpGained(&FWeaponExpGain::Sword, WeaponExpGain.Sword + ExpGain);
-	} else if (Weapon->WeaponItem->GetName().Contains("Warhammer")) {
-		SetWeaponExpGained(&FWeaponExpGain::Warhammer, WeaponExpGain.Warhammer + ExpGain);
-	} else if (Weapon->WeaponItem->GetName().Contains("Bow")) {
-		SetWeaponExpGained(&FWeaponExpGain::Bow, WeaponExpGain.Bow + ExpGain);
-	} else if (Weapon->WeaponItem->GetName().Contains("Spear")) {
-		SetWeaponExpGained(&FWeaponExpGain::Spear, WeaponExpGain.Spear + ExpGain);
-	} else if (Weapon->WeaponItem->GetName().Contains("Shield")) {
-		SetWeaponExpGained(&FWeaponExpGain::Shield, WeaponExpGain.Shield + ExpGain);
-	} 
+	return WeaponsStats[StatName];
 }
 
 bool AModularCharacter::UseStamina(float StaminaToUse)

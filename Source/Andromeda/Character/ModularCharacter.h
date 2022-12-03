@@ -3,18 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Andromeda/Interfaces/Interactable.h"
 #include "CharacterStats.h"
-#include "Andromeda/Equipment/WeaponItem.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ModularCharacter.generated.h"
 
 class UItem;
 class UInventoryComponent;
-
 class UWeaponComponent;
+class UCoins;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnButtonClicked, EInputEvent, InputEvent);
 
 UCLASS(Abstract)
 class ANDROMEDA_API AModularCharacter : public ACharacter
@@ -40,6 +39,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class UCameraComponent* Camera;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	class USpringArmComponent* SpringArm;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FCharacterStats CurrentsStats;
@@ -47,21 +49,26 @@ public:
 	FCharacterStats MaxStats;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FCharacterStats StatsEXP;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	FWeaponExpGain WeaponExpGain;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	FWeaponExpGain WeaponExp;
-
+	
 	void SetCurrentStat(float FCharacterStats::* StatsField, float Value);
 	void SetMaxStat(float FCharacterStats::* StatsField, float Value);
 	void SetStatExp(float FCharacterStats::* StatsField, float Value);
-	void SetWeaponExp(float FWeaponExpGain::* StatsField, float Value);
-	void SetWeaponExpGained(float FWeaponExpGain::* StatsField, float Value);
-	void AddWeaponExp();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TMap<FName, float> WeaponsStats;
 
+	UFUNCTION(BlueprintCallable)
+	void SetWeaponStat(FName StatName, float Value);
+
+	UFUNCTION(BlueprintPure)
+	float GetWeaponStat(FName StatName);
+
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAcess = "true"))
 	UInventoryComponent* Inventory;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Coins", meta = (AllowPrivateAcess = "true"))
+	UCoins* Coins;
 
 	void SetStat(float FCharacterStats::* StatsField, float Value);
 
@@ -79,6 +86,12 @@ public:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	ECharacterState CharacterState = ECharacterState::IDLE;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnButtonClicked OnLeftMouseButtonClicked;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnButtonClicked OnRightMouseButtonClicked;
+	
 	UFUNCTION(BlueprintCallable, Category = "Items")
 	void UseItem(UItem* Item);
 
@@ -98,7 +111,9 @@ protected:
 	
 	float WalkSpeed = 600;
 	float SprintSpeed = 1100;
-	
+
+	void ZoomIn();
+	void ZoomOut();
 
 
 public:
