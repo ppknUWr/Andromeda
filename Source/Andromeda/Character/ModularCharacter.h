@@ -3,9 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Andromeda/Interfaces/Interactable.h"
 #include "CharacterStats.h"
-#include "Andromeda/Equipment/WeaponItem.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ModularCharacter.generated.h"
@@ -14,6 +12,8 @@ class UItem;
 class UInventoryComponent;
 class UWeaponComponent;
 class UCoins;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnButtonClicked, EInputEvent, InputEvent);
 
 UCLASS(Abstract)
 class ANDROMEDA_API AModularCharacter : public ACharacter
@@ -86,6 +86,12 @@ public:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	ECharacterState CharacterState = ECharacterState::IDLE;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnButtonClicked OnLeftMouseButtonClicked;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnButtonClicked OnRightMouseButtonClicked;
+	
 	UFUNCTION(BlueprintCallable, Category = "Items")
 	void UseItem(UItem* Item);
 
