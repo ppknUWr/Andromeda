@@ -11,6 +11,8 @@ UItem::UItem()
 	ItemDescription = FText::FromString("Basic Item Description");
 	Weight = 1.f;
 	ItemType = EItemType::OTHER;
+	BuyPrice = 100;
+	SellPrice = 25;
 }
 
 void UItem::Use(AModularCharacter* Character)
