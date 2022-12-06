@@ -19,7 +19,7 @@ public:
 	// Sets default values for this component's properties
 	UWeaponComponent();
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UWeaponItem* WeaponItem = nullptr;
 
 	UFUNCTION(BlueprintPure)
