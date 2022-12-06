@@ -16,9 +16,7 @@ class ANDROMEDA_API USideArmsWeaponItem : public UWeaponItem
 
 public:
 
-	virtual void LeftMousePressed_Implementation(USkeletalMeshComponent* MeshComponent) override;
+	virtual void LeftMousePressed_Implementation(AModularCharacter* ModularCharacter) override;
 
-	void AttackWithCombo(USkeletalMeshComponent* MeshComponent);
-
-	int32 ComboCounter = 0;
+	void AttackWithCombo(USkeletalMeshComponent* MeshComponent, int32 ComboIndex) const;
 };

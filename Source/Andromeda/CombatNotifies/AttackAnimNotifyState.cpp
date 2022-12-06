@@ -9,10 +9,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-#define PrintInfo(String) GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Blue, String)
-#define PrintWarning(String) GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Yellow, String)
-#define PrintError(String) GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Red, String)
-
 void UAttackAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);

@@ -2,6 +2,8 @@
 
 
 #include "ModularCharacter.h"
+
+#include "Andromeda/Andromeda.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -183,7 +185,7 @@ void AModularCharacter::LeftMouseClick()
 	
 	if(Weapon->IsWeaponEquipped() && CharacterState !=  ECharacterState::ATTACK)
 	{
-		Weapon->WeaponItem->LeftMousePressed(GetMesh());
+		Weapon->WeaponItem->LeftMousePressed(this);
 	}
 
 	if(Weapon->IsWeaponAtRest()  && CharacterState !=  ECharacterState::EQUIP)

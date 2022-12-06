@@ -7,7 +7,6 @@
 #include "ComboWindowNotifyState.generated.h"
 
 class AModularCharacter;
-class USideArmsWeaponItem;
 
 /**
  * 
@@ -23,10 +22,7 @@ public:
 
 	UPROPERTY()
 	AModularCharacter* ModularCharacter;
-
-	UPROPERTY()
-	USideArmsWeaponItem* WeaponItem;
-
+	
 	UPROPERTY(EditAnywhere)
 	bool bIsLastAttack = false;
 

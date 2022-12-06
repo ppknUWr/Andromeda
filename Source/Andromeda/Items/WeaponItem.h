@@ -47,7 +47,7 @@ public:
 	UAnimMontage* AttackMontage;
 	
 	UFUNCTION(BlueprintNativeEvent)
-	void LeftMousePressed(USkeletalMeshComponent* MeshComponent);
+	void LeftMousePressed(AModularCharacter* ModularCharacter);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void LeftMouseReleased(USkeletalMeshComponent* MeshComponent);
@@ -59,9 +59,7 @@ public:
     void RightMouseReleased(USkeletalMeshComponent* MeshComponent);
 
 private:
-
 	
-
 	UFUNCTION()
 	static TArray<FName> GetWeaponAttachSocket()
 	{

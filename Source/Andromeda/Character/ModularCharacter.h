@@ -95,7 +95,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Items")
 	void UseItem(UItem* Item);
 
-
+	int32 ComboCounter = 0;
 protected:
 
 	void ApplyRagdoll();

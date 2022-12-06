@@ -14,6 +14,6 @@ void UWeaponItem::Use(AModularCharacter* Character)
 	Character->Weapon->ChangeWeapon(this);
 }
 
-void UWeaponItem::LeftMousePressed_Implementation(USkeletalMeshComponent* MeshComponent)
+void UWeaponItem::LeftMousePressed_Implementation(AModularCharacter* ModularCharacter)
 {
 }

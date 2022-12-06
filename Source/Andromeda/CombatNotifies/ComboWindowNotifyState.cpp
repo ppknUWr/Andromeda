@@ -7,22 +7,17 @@
 #include "Andromeda/Components/WeaponComponent.h"
 #include "Andromeda/Items/SideArmsWeaponItem.h"
 
-#define PrintInfo(String) GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Blue, String)
 
 void UComboWindowNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
 	ModularCharacter = Cast<AModularCharacter>(MeshComp->GetOwner());
+	bComboTriggered = false;
 	
-	if(ModularCharacter != nullptr)
+	if(ModularCharacter && !bIsLastAttack)
 	{
-		WeaponItem = Cast<USideArmsWeaponItem>(ModularCharacter->Weapon->WeaponItem);
-
-		if(!bIsLastAttack)
-		{
-			ModularCharacter->OnLeftMouseButtonClicked.AddDynamic(this, &UComboWindowNotifyState::PerformCombo);
-		}
+		ModularCharacter->OnLeftMouseButtonClicked.AddDynamic(this, &UComboWindowNotifyState::PerformCombo);
 	}
 }
 
@@ -36,12 +31,15 @@ void UComboWindowNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimS
 
 		if(bComboTriggered)
 		{
-			WeaponItem->AttackWithCombo(ModularCharacter->GetMesh());
+			const USideArmsWeaponItem* WeaponItem = Cast<USideArmsWeaponItem>(ModularCharacter->Weapon->WeaponItem);
+
+			ModularCharacter->ComboCounter++;
+			WeaponItem->AttackWithCombo(ModularCharacter->GetMesh(), ModularCharacter->ComboCounter);
 		}
 		
 		if(!bComboTriggered || bIsLastAttack)
 		{
-			WeaponItem->ComboCounter = 0;
+			ModularCharacter->ComboCounter = 0;
 		}
 	}
 }
