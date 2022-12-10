@@ -21,7 +21,7 @@ void UAttackAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnim
 	{
 		Weapon = ModularCharacter->Weapon;
 		TraceSockets = Weapon->SkeletalMesh->GetActiveSocketList();// collect all sockets
-		
+	
 		for(int i = 0; i < TraceSockets.Num(); i++)
 		{
 			PreviousLocations.Add(TraceSockets[i]->GetSocketLocation(Weapon));

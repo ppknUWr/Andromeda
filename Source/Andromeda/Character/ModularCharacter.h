@@ -12,6 +12,7 @@ class UItem;
 class UInventoryComponent;
 class UWeaponComponent;
 class UCoins;
+class AThrowableActor;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnButtonClicked, EInputEvent, InputEvent);
 
@@ -96,6 +97,9 @@ public:
 	void UseItem(UItem* Item);
 
 	int32 ComboCounter = 0;
+
+	UPROPERTY(BlueprintReadWrite)
+	AThrowableActor* SpawnThrowableActor;
 protected:
 
 	void ApplyRagdoll();

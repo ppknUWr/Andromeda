@@ -97,6 +97,7 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AModularCharacter::Interact);
 
 	PlayerInputComponent->BindAction("LeftMouseClick", IE_Pressed, this, &AModularCharacter::LeftMouseClick);
+	PlayerInputComponent->BindAction("LeftMouseClick", IE_Released, this, &AModularCharacter::LeftMouseRelease);
 	
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
@@ -196,7 +197,8 @@ void AModularCharacter::LeftMouseClick()
 
 void AModularCharacter::LeftMouseRelease()
 {
-	Weapon->WeaponItem->LeftMouseReleased(GetMesh());
+	if(Weapon->IsWeaponEquipped())
+		Weapon->WeaponItem->LeftMouseReleased(GetMesh());
 }
 
 void AModularCharacter::ZoomIn()

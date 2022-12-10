@@ -63,7 +63,7 @@ private:
 	UFUNCTION()
 	static TArray<FName> GetWeaponAttachSocket()
 	{
-		return {"RightHandSocket", "LeftHandSocket"};
+		return {"RightHandSocket", "LeftHandSocket","BowSocket"};
 	}
 	
 	//todo: Maybe we can make rest sockets customizable by player
