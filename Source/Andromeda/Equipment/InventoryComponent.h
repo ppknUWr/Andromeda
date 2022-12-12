@@ -38,7 +38,7 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Inventory")
 	FOnInventoryUpdated OnInventoryUpdated;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Items")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Items", SaveGame)
 	TArray<UItem*> Items;
 	
 };

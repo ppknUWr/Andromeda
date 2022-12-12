@@ -179,6 +179,11 @@ void AModularCharacter::LeftMouseRelease()
 	Weapon->WeaponItem->LeftMouseReleased(GetMesh());
 }
 
+void AModularCharacter::OnActorLoaded()
+{
+	
+}
+
 void AModularCharacter::SetCurrentStat(float FCharacterStats::* StatsField, float Value)
 {
 	CurrentsStats.*StatsField = Value;

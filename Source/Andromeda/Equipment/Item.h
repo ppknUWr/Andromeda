@@ -52,10 +52,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
 	UStaticMesh* PickupMesh;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", SaveGame)
 	UTexture2D* Thumbnail;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", SaveGame)
 	FText ItemDisplayName;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item", meta = (MultiLine = true))
