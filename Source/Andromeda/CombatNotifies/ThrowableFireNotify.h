@@ -19,15 +19,11 @@ public:
 	// Sets default values for this component's properties
 	UThrowableFireNotify();
 
-	/** Actor **/
-	UPROPERTY(EditAnywhere, Category = "SpawnFireActorBP")
-		TSubclassOf < AThrowableActor > SpawnFireActorBP;
 
-	UPROPERTY()
-	AModularCharacter* ModularCharacter;
+	UPROPERTY(EditAnywhere, Category = "SpawnFireActorBP")
+	TSubclassOf <AThrowableActor> SpawnFireActorBP;
+	
 
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
-	FVector LocationFire;
-	FRotator RotationFire;
 
 };

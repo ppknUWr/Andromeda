@@ -50,20 +50,20 @@ public:
 	void LeftMousePressed(AModularCharacter* ModularCharacter);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void LeftMouseReleased(USkeletalMeshComponent* MeshComponent);
+	void LeftMouseReleased(AModularCharacter* ModularCharacter);
 	
     UFUNCTION(BlueprintImplementableEvent)
-    void RightMousePressed(USkeletalMeshComponent* MeshComponent);
+    void RightMousePressed(AModularCharacter* ModularCharacter);
 
     UFUNCTION(BlueprintImplementableEvent)
-    void RightMouseReleased(USkeletalMeshComponent* MeshComponent);
+    void RightMouseReleased(AModularCharacter* ModularCharacter);
 
 private:
 	
 	UFUNCTION()
 	static TArray<FName> GetWeaponAttachSocket()
 	{
-		return {"RightHandSocket", "LeftHandSocket","BowSocket"};
+		return {"RightHandSocket", "LeftHandSocket", "BowSocket", "ShieldSocket"};
 	}
 	
 	//todo: Maybe we can make rest sockets customizable by player

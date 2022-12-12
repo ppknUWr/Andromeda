@@ -7,7 +7,7 @@
 #include "ThrowableActor.generated.h"
 
 class UStaticMeshComponent;
-class UCapsuleComponent;
+class USphereComponent;
 class UProjectileMovementComponent;
 class UWeaponItem;
 
@@ -21,20 +21,22 @@ public:
 	AThrowableActor();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UStaticMeshComponent* StaticMesh;
+	UStaticMeshComponent* StaticMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UCapsuleComponent* Capsule;
+	USphereComponent* Sphere;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UProjectileMovementComponent* ProjectileMovement;
+	UProjectileMovementComponent* ProjectileMovement;
 
-	UPROPERTY(EditAnywhere, Instanced)
-		UWeaponItem* WeaponItem;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Instanced)
+	UWeaponItem* WeaponItem;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	FTimerHandle TimerHandle;
 
 public:	
 	// Called every frame

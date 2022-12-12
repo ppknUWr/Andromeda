@@ -7,6 +7,7 @@
 #include "Andromeda/Items/WeaponItem.h"
 #include "Engine/World.h"
 #include "Andromeda/Throwable/ThrowableActor.h"
+#include "Camera/CameraComponent.h"
 
 
 UThrowableFireNotify::UThrowableFireNotify()
@@ -21,18 +22,21 @@ void UThrowableFireNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 
 	if (SpawnFireActorBP && MeshComp->GetWorld()) 
 	{
-		LocationFire =  MeshComp->GetSocketLocation("RightHandSocket");
-
-		RotationFire = MeshComp->GetOwner()->GetActorRotation();
-
-		//Actual Spawn. The following function returns a reference to the spawned actor
-		AThrowableActor* SpawnFireActorRef = MeshComp->GetWorld()->SpawnActor<AThrowableActor>(SpawnFireActorBP, LocationFire, RotationFire);
-	
-		ModularCharacter = MeshComp->GetOwner<AModularCharacter>();
-		if (ModularCharacter)
+		if (AModularCharacter* ModularCharacter = MeshComp->GetOwner<AModularCharacter>())
 		{
+			const FVector LocationFire =  ModularCharacter->Weapon->GetSocketLocation("ArrowSocket");
+			const FRotator RotationFire = ModularCharacter->Camera->GetComponentRotation();
+			
+			FActorSpawnParameters SpawnParameters;
+			SpawnParameters.Owner = ModularCharacter;
+			SpawnParameters.Instigator = ModularCharacter->GetInstigator();
+			
+			//Actual Spawn. The following function returns a reference to the spawned actor
+			AThrowableActor* SpawnFireActorRef = MeshComp->GetWorld()->SpawnActor<AThrowableActor>(SpawnFireActorBP, LocationFire, RotationFire, SpawnParameters);
+			
 			ModularCharacter->SpawnThrowableActor = SpawnFireActorRef;
-			SpawnFireActorRef->AttachToComponent(ModularCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "RightHandSocket");
+			SpawnFireActorRef->AttachToComponent(ModularCharacter->Weapon, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "ArrowSocket");
+			
 		}
 	}
 }

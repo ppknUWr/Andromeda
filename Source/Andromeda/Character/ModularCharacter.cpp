@@ -198,7 +198,7 @@ void AModularCharacter::LeftMouseClick()
 void AModularCharacter::LeftMouseRelease()
 {
 	if(Weapon->IsWeaponEquipped())
-		Weapon->WeaponItem->LeftMouseReleased(GetMesh());
+		Weapon->WeaponItem->LeftMouseReleased(this);
 }
 
 void AModularCharacter::ZoomIn()

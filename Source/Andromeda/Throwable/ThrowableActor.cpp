@@ -2,7 +2,7 @@
 
 
 #include "ThrowableActor.h"
-#include "Components/CapsuleComponent.h"
+#include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Andromeda/Items/WeaponItem.h"
@@ -13,12 +13,19 @@ AThrowableActor::AThrowableActor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>("StaticMesh");
-	Capsule = CreateDefaultSubobject<UCapsuleComponent>("Capsule");
+	Sphere = CreateDefaultSubobject<USphereComponent>("Sphere");
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovement");
-	SetRootComponent(Capsule);
-	StaticMesh->SetupAttachment(Capsule);
-	ProjectileMovement->Deactivate();
-	ProjectileMovement->InitialSpeed = 300;
+	
+	SetRootComponent(Sphere);
+	StaticMesh->SetupAttachment(Sphere);
+
+	Sphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
+	ProjectileMovement->InitialSpeed = 1500;
+	ProjectileMovement->MaxSpeed = 1500;
+	ProjectileMovement->Velocity = FVector(1.f, 0.f, 0.f);
+	ProjectileMovement->SetActive(false);
+	
 }
 
 // Called when the game starts or when spawned
@@ -41,8 +48,17 @@ void AThrowableActor::Tick(float DeltaTime)
 
 void AThrowableActor::ActivateProjectile()
 {
-	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	ProjectileMovement->Activate();
-	ProjectileMovement->SetUpdatedComponent(Capsule);
+	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	
+	
+	GetWorldTimerManager().SetTimer(TimerHandle, [&]()
+	{
+		Sphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		GetWorldTimerManager().ClearTimer(TimerHandle);
+		
+	}, 0.01f, false);
+	
+	
 }
 
