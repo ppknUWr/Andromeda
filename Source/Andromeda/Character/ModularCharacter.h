@@ -3,10 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Andromeda/Interfaces/Interactable.h"
 #include "CharacterStats.h"
+<<<<<<< HEAD
 #include "Andromeda/Equipment/WeaponItem.h"
 #include "Andromeda/SaveSystem/SaveableInterface.h"
+=======
+>>>>>>> origin/master
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ModularCharacter.generated.h"
@@ -14,7 +16,9 @@
 class UItem;
 class UInventoryComponent;
 class UWeaponComponent;
+class UCoins;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnButtonClicked, EInputEvent, InputEvent);
 
 UCLASS(Abstract)
 class ANDROMEDA_API AModularCharacter : public ACharacter, public ISaveableInterface
@@ -41,6 +45,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class UCameraComponent* Camera;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	class USpringArmComponent* SpringArm;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame)
 	FCharacterStats CurrentsStats;
@@ -66,6 +73,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAcess = "true"))
 	UInventoryComponent* Inventory;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Coins", meta = (AllowPrivateAcess = "true"))
+	UCoins* Coins;
+
 	void SetStat(float FCharacterStats::* StatsField, float Value);
 
 	//React to hit, based on hit result 's bone name
@@ -82,10 +92,16 @@ public:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	ECharacterState CharacterState = ECharacterState::IDLE;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnButtonClicked OnLeftMouseButtonClicked;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnButtonClicked OnRightMouseButtonClicked;
+	
 	UFUNCTION(BlueprintCallable, Category = "Items")
 	void UseItem(UItem* Item);
 
-
+	int32 ComboCounter = 0;
 protected:
 
 	void ApplyRagdoll();
@@ -101,7 +117,9 @@ protected:
 	
 	float WalkSpeed = 600;
 	float SprintSpeed = 1100;
-	
+
+	void ZoomIn();
+	void ZoomOut();
 
 	virtual void OnActorLoaded() override;
 	
