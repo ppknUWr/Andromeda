@@ -199,6 +199,11 @@ void AModularCharacter::LeftMouseRelease()
 	Weapon->WeaponItem->LeftMouseReleased(GetMesh());
 }
 
+<<<<<<< HEAD
+void AModularCharacter::OnActorLoaded()
+{
+	
+=======
 void AModularCharacter::ZoomIn()
 {
 	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength - 10.f, 150.f, 450.f);
@@ -221,6 +226,7 @@ void AModularCharacter::ZoomOut()
 	}
 	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength + 10.f, 150.f, 450.f);
 
+>>>>>>> origin/master
 }
 
 void AModularCharacter::SetCurrentStat(float FCharacterStats::* StatsField, float Value)
