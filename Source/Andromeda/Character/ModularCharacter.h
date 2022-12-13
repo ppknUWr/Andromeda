@@ -4,11 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CharacterStats.h"
-<<<<<<< HEAD
-#include "Andromeda/Equipment/WeaponItem.h"
 #include "Andromeda/SaveSystem/SaveableInterface.h"
-=======
->>>>>>> origin/master
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ModularCharacter.generated.h"
