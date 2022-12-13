@@ -72,6 +72,4 @@ Saved/*
 Intermediate/*
 Plugins/*/Intermediate/*
 
-# Cache files for the editor to use
-DerivedDataCache/*
-Content/__ExternalActors__/Maps/ThirdPersonMap/9/NZ/QPUVHBH1Z7J5FQ4KQILSM5.uasset
+
