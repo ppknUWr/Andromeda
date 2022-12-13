@@ -2,16 +2,20 @@
 
 
 #include "ModularCharacter.h"
-#include "Andromeda/Combat/WeaponComponent.h"
-#include "Andromeda/Equipment/WeaponItem.h"
+
+#include "Andromeda/Andromeda.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
-#include "../Equipment/Item.h"
-#include "../Equipment/InventoryComponent.h"
-#include "Andromeda/Interfaces/Interactable.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Andromeda/Components/InventoryComponent.h"
+#include "Andromeda/Components/WeaponComponent.h"
+#include "Andromeda/Items/WeaponItem.h"
+#include "Andromeda/Items/Item.h"
+#include "Andromeda/Items/Coins.h"
+#include "Andromeda/Interfaces/Interactable.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 
@@ -36,6 +40,12 @@ AModularCharacter::AModularCharacter()
 	Weapon = CreateDefaultSubobject<UWeaponComponent>("Weapon");
 	Weapon->SetupAttachment(GetMesh(), "LeftHipSocket");
 
+	//// SPRING ARM
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
+	SpringArm->SetupAttachment(GetCapsuleComponent());
+	SpringArm->TargetArmLength = 150.f;
+	SpringArm->TargetOffset = FVector(0.f, 45.f, 30.f);
+	
 	
 	//// CAMERA
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
@@ -52,11 +62,15 @@ AModularCharacter::AModularCharacter()
 	//// INITIALIZE INVENTORY
 	Inventory = CreateDefaultSubobject<UInventoryComponent>("Inventory");
 	Inventory->Capacity = 20;
+
+	//// INITIALIZE COINS
+	Coins = CreateDefaultSubobject<UCoins>("Coins");
 	
 	for(FName WeaponStatName : UWeaponItem::GetWeapons())
 		WeaponsStats.FindOrAdd(WeaponStatName, 0);
 
 }
+
 
 float AModularCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
@@ -93,6 +107,10 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AModularCharacter::BeginCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AModularCharacter::EndCrouch);
 	
+	PlayerInputComponent->BindAction("ZoomIn", IE_Pressed, this, &AModularCharacter::ZoomIn);
+	PlayerInputComponent->BindAction("ZoomIn", IE_Repeat, this, &AModularCharacter::ZoomIn);
+	PlayerInputComponent->BindAction("ZoomOut", IE_Pressed, this, &AModularCharacter::ZoomOut);
+	PlayerInputComponent->BindAction("ZoomOut", IE_Repeat, this, &AModularCharacter::ZoomOut);
 }
 
 // Called when the game starts or when spawned
@@ -163,9 +181,11 @@ AActor* AModularCharacter::CastLineTrace()
 
 void AModularCharacter::LeftMouseClick()
 {
+	OnLeftMouseButtonClicked.Broadcast(IE_Pressed);
+	
 	if(Weapon->IsWeaponEquipped() && CharacterState !=  ECharacterState::ATTACK)
 	{
-		Weapon->WeaponItem->LeftMousePressed(GetMesh());
+		Weapon->WeaponItem->LeftMousePressed(this);
 	}
 
 	if(Weapon->IsWeaponAtRest()  && CharacterState !=  ECharacterState::EQUIP)
@@ -177,6 +197,33 @@ void AModularCharacter::LeftMouseClick()
 void AModularCharacter::LeftMouseRelease()
 {
 	Weapon->WeaponItem->LeftMouseReleased(GetMesh());
+}
+
+void AModularCharacter::OnActorLoaded()
+{
+	
+}
+void AModularCharacter::ZoomIn()
+{
+	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength - 10.f, 150.f, 450.f);
+	if (SpringArm->TargetArmLength == 150.f)
+	{
+		Camera->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "head");
+		Camera->SetRelativeLocation(FVector(5.f, 15.f, 0.f));
+		Camera->bUsePawnControlRotation = true;
+		SpringArm->bUsePawnControlRotation = false;
+	}
+}
+
+void AModularCharacter::ZoomOut()
+{
+	if (SpringArm->TargetArmLength == 150.f)
+	{
+		Camera->AttachToComponent(SpringArm, FAttachmentTransformRules::SnapToTargetIncludingScale);
+		Camera->bUsePawnControlRotation = false;
+		SpringArm->bUsePawnControlRotation = true;
+	}
+	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength + 10.f, 150.f, 450.f);
 }
 
 void AModularCharacter::SetCurrentStat(float FCharacterStats::* StatsField, float Value)
