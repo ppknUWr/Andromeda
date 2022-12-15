@@ -43,6 +43,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable)
-	virtual void ActivateProjectile();
+	virtual void ActivateProjectile(FVector NewVelocity);
 
 };

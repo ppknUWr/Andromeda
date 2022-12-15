@@ -25,7 +25,7 @@ void UThrowableFireNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 		if (AModularCharacter* ModularCharacter = MeshComp->GetOwner<AModularCharacter>())
 		{
 			const FVector LocationFire =  ModularCharacter->Weapon->GetSocketLocation("ArrowSocket");
-			const FRotator RotationFire = ModularCharacter->Camera->GetComponentRotation();
+			const FRotator RotationFire = ModularCharacter->GetActorRotation();
 			
 			FActorSpawnParameters SpawnParameters;
 			SpawnParameters.Owner = ModularCharacter;
@@ -35,7 +35,8 @@ void UThrowableFireNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 			AThrowableActor* SpawnFireActorRef = MeshComp->GetWorld()->SpawnActor<AThrowableActor>(SpawnFireActorBP, LocationFire, RotationFire, SpawnParameters);
 			
 			ModularCharacter->SpawnThrowableActor = SpawnFireActorRef;
-			SpawnFireActorRef->AttachToComponent(ModularCharacter->Weapon, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "ArrowSocket");
+			FAttachmentTransformRules AttachRule = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, true);
+			SpawnFireActorRef->AttachToComponent(ModularCharacter->Weapon, AttachRule, "ArrowSocket");
 			
 		}
 	}

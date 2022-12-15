@@ -46,8 +46,9 @@ void AThrowableActor::Tick(float DeltaTime)
 
 }
 
-void AThrowableActor::ActivateProjectile()
+void AThrowableActor::ActivateProjectile(FVector NewVelocity)
 {
+	ProjectileMovement->Velocity = NewVelocity * ProjectileMovement->InitialSpeed;
 	ProjectileMovement->Activate();
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	
@@ -57,7 +58,7 @@ void AThrowableActor::ActivateProjectile()
 		Sphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		GetWorldTimerManager().ClearTimer(TimerHandle);
 		
-	}, 0.01f, false);
+	}, 0.05f, false);
 	
 	
 }
