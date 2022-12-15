@@ -11,9 +11,13 @@ void UWeaponItem::Use(AModularCharacter* Character)
 {
 	Super::Use(Character);
 
-	Character->Weapon->ChangeWeapon(this);
+	Character->LeftHandWeapon->ChangeWeapon(this);
 }
 
-void UWeaponItem::LeftMousePressed_Implementation(AModularCharacter* ModularCharacter)
+void UWeaponItem::MouseButtonReleased_Implementation(AModularCharacter* ModularCharacter, bool bIsRightHand)
+{
+}
+
+void UWeaponItem::MouseButtonPressed_Implementation(AModularCharacter* ModularCharacter, bool bIsRightHand)
 {
 }

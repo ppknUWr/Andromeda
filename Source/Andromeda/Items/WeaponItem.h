@@ -13,6 +13,14 @@
 class USkeletalMesh;
 class USkeletalMeshComponent;
 
+UENUM(BlueprintType)
+enum EPreferableHand
+{
+	LeftHand	UMETA(DisplayName = "Left Hand"),
+	RightHand	UMETA(DisplayName = "Right Hand"),
+	BothHands	UMETA(DisplayName = "Both Hands")
+};
+
 
 UCLASS()
 class ANDROMEDA_API UWeaponItem : public UItem
@@ -36,6 +44,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta=(GetOptions="GetWeapons"))
 	FName WeaponStatisticName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	TEnumAsByte<EPreferableHand> PreferableHand;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	USkeletalMesh* AttachMesh;
@@ -47,16 +58,10 @@ public:
 	UAnimMontage* AttackMontage;
 	
 	UFUNCTION(BlueprintNativeEvent)
-	void LeftMousePressed(AModularCharacter* ModularCharacter);
+	void MouseButtonPressed(AModularCharacter* ModularCharacter, bool bIsRightHand);
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void LeftMouseReleased(USkeletalMeshComponent* MeshComponent);
-	
-    UFUNCTION(BlueprintImplementableEvent)
-    void RightMousePressed(USkeletalMeshComponent* MeshComponent);
-
-    UFUNCTION(BlueprintImplementableEvent)
-    void RightMouseReleased(USkeletalMeshComponent* MeshComponent);
+    UFUNCTION(BlueprintNativeEvent)
+    void MouseButtonReleased(AModularCharacter* ModularCharacter, bool bIsRightHand);
 
 private:
 	

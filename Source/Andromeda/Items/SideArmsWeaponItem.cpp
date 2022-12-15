@@ -4,8 +4,7 @@
 #include "SideArmsWeaponItem.h"
 #include "Andromeda/Character/ModularCharacter.h"
 
-
-void USideArmsWeaponItem::LeftMousePressed_Implementation(AModularCharacter* ModularCharacter)
+void USideArmsWeaponItem::MouseButtonPressed_Implementation(AModularCharacter* ModularCharacter, bool bIsRightHand)
 {
 	AttackWithCombo(ModularCharacter->GetMesh(), 0);
 }

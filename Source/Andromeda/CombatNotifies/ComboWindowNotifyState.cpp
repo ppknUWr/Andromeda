@@ -31,7 +31,7 @@ void UComboWindowNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimS
 
 		if(bComboTriggered)
 		{
-			const USideArmsWeaponItem* WeaponItem = Cast<USideArmsWeaponItem>(ModularCharacter->Weapon->WeaponItem);
+			const USideArmsWeaponItem* WeaponItem = Cast<USideArmsWeaponItem>(ModularCharacter->LeftHandWeapon->WeaponItem);
 
 			ModularCharacter->ComboCounter++;
 			WeaponItem->AttackWithCombo(ModularCharacter->GetMesh(), ModularCharacter->ComboCounter);

@@ -44,6 +44,14 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class USpringArmComponent* SpringArm;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Components")
+	UWeaponComponent* LeftHandWeapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Components")
+	UWeaponComponent* RightHandWeapon;
+	
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame)
 	FCharacterStats CurrentsStats;
@@ -81,9 +89,6 @@ public:
 	//Return true if Stamina is above 0
 	UFUNCTION(BlueprintCallable)
 	bool UseStamina(float StaminaToUse);
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UWeaponComponent* Weapon;
 	
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	ECharacterState CharacterState = ECharacterState::IDLE;
@@ -108,8 +113,8 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	AActor* LastSeenInteractableObject = nullptr;
 	
-	void LeftMouseClick();
-	void LeftMouseRelease();
+	void WeaponMouseButtonPressed(UWeaponComponent* WeaponComponent, bool bIsRightHand);
+	void WeaponMouseButtonReleased(UWeaponComponent* WeaponComponent, bool bIsRightHand);
 	
 	float WalkSpeed = 600;
 	float SprintSpeed = 1100;

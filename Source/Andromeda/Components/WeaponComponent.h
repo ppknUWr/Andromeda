@@ -32,8 +32,6 @@ public:
 	void ChangeWeapon(UWeaponItem* NewWeapon);
 	
 	void PlayEquipAnimation(AModularCharacter* ModularCharacter);
-	
-
 
 protected:
 	// Called when the game starts
