@@ -13,6 +13,14 @@
 class USkeletalMesh;
 class USkeletalMeshComponent;
 
+UENUM(BlueprintType)
+enum EPreferableHand
+{
+	RightHand	UMETA(DisplayName = "Right Hand"),
+	LeftHand	UMETA(DisplayName = "Left Hand"),
+	BothHands	UMETA(DisplayName = "Both Hands")
+};
+
 
 UCLASS()
 class ANDROMEDA_API UWeaponItem : public UItem
@@ -36,6 +44,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta=(GetOptions="GetWeapons"))
 	FName WeaponStatisticName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	TEnumAsByte<EPreferableHand> PreferableHand;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta=(EditCondition="PreferableHand == EPreferableHand::BothHands"))
+	bool bIsTwoHandedWeaponForRightHand = true;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	USkeletalMesh* AttachMesh;
@@ -47,23 +61,16 @@ public:
 	UAnimMontage* AttackMontage;
 	
 	UFUNCTION(BlueprintNativeEvent)
-	void LeftMousePressed(AModularCharacter* ModularCharacter);
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void LeftMouseReleased(USkeletalMeshComponent* MeshComponent);
+	void MouseButtonPressed(AModularCharacter* ModularCharacter, bool bIsRightHand);
 	
-    UFUNCTION(BlueprintImplementableEvent)
-    void RightMousePressed(USkeletalMeshComponent* MeshComponent);
-
-    UFUNCTION(BlueprintImplementableEvent)
-    void RightMouseReleased(USkeletalMeshComponent* MeshComponent);
-
+    UFUNCTION(BlueprintNativeEvent)
+    void MouseButtonReleased(AModularCharacter* ModularCharacter, bool bIsRightHand);
 private:
 	
 	UFUNCTION()
 	static TArray<FName> GetWeaponAttachSocket()
 	{
-		return {"RightHandSocket", "LeftHandSocket", "ShieldSocket"};
+		return {"RightHandSocket", "LeftHandSocket", "BowSocket", "ShieldSocket"};
 	}
 	
 	//todo: Maybe we can make rest sockets customizable by player

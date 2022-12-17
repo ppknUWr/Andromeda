@@ -6,6 +6,8 @@
 #include "Animation/AnimNotifies/AnimNotify.h"
 #include "ThrowableFireNotify.generated.h"
 
+class AModularCharacter;
+class AThrowableActor;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ANDROMEDA_API UThrowableFireNotify : public UAnimNotify
@@ -17,12 +19,11 @@ public:
 	// Sets default values for this component's properties
 	UThrowableFireNotify();
 
-	/** Actor **/
-	UPROPERTY(EditDefaultsOnly, Category = "SpawnFireActorBP")
-		TSubclassOf<AActor> SpawnFireActorBP;
+
+	UPROPERTY(EditAnywhere, Category = "SpawnFireActorBP")
+	TSubclassOf <AThrowableActor> SpawnFireActorBP;
+	
 
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
-	FVector LocationFire;
-	FRotator RotationFire;
 
 };

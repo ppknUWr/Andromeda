@@ -13,7 +13,9 @@ class UItem;
 class UInventoryComponent;
 class UWeaponComponent;
 class UCoins;
+class AThrowableActor;
 
+DECLARE_DELEGATE_TwoParams(FWeaponUsedDelegate, UWeaponComponent*, bool);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnButtonClicked, EInputEvent, InputEvent);
 
 UCLASS(Abstract)
@@ -44,6 +46,14 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class USpringArmComponent* SpringArm;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Components")
+	UWeaponComponent* LeftHandWeapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Components")
+	UWeaponComponent* RightHandWeapon;
+	
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame)
 	FCharacterStats CurrentsStats;
@@ -81,9 +91,6 @@ public:
 	//Return true if Stamina is above 0
 	UFUNCTION(BlueprintCallable)
 	bool UseStamina(float StaminaToUse);
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UWeaponComponent* Weapon;
 	
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	ECharacterState CharacterState = ECharacterState::IDLE;
@@ -98,6 +105,9 @@ public:
 	void UseItem(UItem* Item);
 
 	int32 ComboCounter = 0;
+
+	UPROPERTY(BlueprintReadWrite)
+	AThrowableActor* SpawnThrowableActor;
 protected:
 
 	void ApplyRagdoll();
@@ -108,8 +118,8 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	AActor* LastSeenInteractableObject = nullptr;
 	
-	void LeftMouseClick();
-	void LeftMouseRelease();
+	void MouseButtonPressed(UWeaponComponent* WeaponComponent, bool bIsRightHand);
+	void MouseButtonReleased(UWeaponComponent* WeaponComponent, bool bIsRightHand);
 	
 	float WalkSpeed = 600;
 	float SprintSpeed = 1100;
