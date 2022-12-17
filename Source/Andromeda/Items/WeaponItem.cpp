@@ -11,7 +11,30 @@ void UWeaponItem::Use(AModularCharacter* Character)
 {
 	Super::Use(Character);
 
-	Character->LeftHandWeapon->ChangeWeapon(this);
+	switch (PreferableHand)
+	{
+	case RightHand:
+		Character->RightHandWeapon->ChangeWeapon(this);
+		break;
+	case LeftHand:
+		Character->LeftHandWeapon->ChangeWeapon(this);
+		break;
+	case BothHands:
+		if(bIsTwoHandedWeaponForRightHand)
+		{
+			Character->RightHandWeapon->ChangeWeapon(this);
+			Character->LeftHandWeapon->WeaponItem = this; //make it possible for input being called with other button
+		}
+		else
+		{
+			Character->LeftHandWeapon->ChangeWeapon(this);
+			Character->RightHandWeapon->WeaponItem = this;
+		}
+		break;
+	default:
+		break;
+	}
+
 }
 
 void UWeaponItem::MouseButtonReleased_Implementation(AModularCharacter* ModularCharacter, bool bIsRightHand)

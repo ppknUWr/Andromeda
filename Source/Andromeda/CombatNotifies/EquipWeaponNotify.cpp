@@ -18,11 +18,11 @@ void UEquipWeaponNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceB
 
 	if (AModularCharacter* ModularCharacter = Cast<AModularCharacter>(MeshComp->GetOwner()))
 	{
-		UWeaponItem* WeaponItem = ModularCharacter->LeftHandWeapon->WeaponItem;
+		UWeaponComponent* WeaponComponent = bIsForRightHand ? ModularCharacter->RightHandWeapon : ModularCharacter->LeftHandWeapon;
+		
+		UWeaponItem* WeaponItem = WeaponComponent->WeaponItem;
 		FName AttachSocket = bShouldEquip ? WeaponItem->WeaponAttachSocket : WeaponItem->WeaponRestSocket;
 
-		ModularCharacter->LeftHandWeapon->AttachToComponent(ModularCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachSocket);
+		WeaponComponent->AttachToComponent(ModularCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachSocket);
 	}
 }
-
-

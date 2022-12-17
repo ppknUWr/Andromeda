@@ -18,8 +18,6 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-DECLARE_DELEGATE_TwoParams(FWeaponUsedDelegate, UWeaponComponent*, bool);
-
 // Sets default values
 AModularCharacter::AModularCharacter()
 {
@@ -40,8 +38,8 @@ AModularCharacter::AModularCharacter()
 
 	LeftHandWeapon = CreateDefaultSubobject<UWeaponComponent>("LeftHandWeapon");
 	RightHandWeapon = CreateDefaultSubobject<UWeaponComponent>("RightHandWeapon");
-	LeftHandWeapon->SetupAttachment(GetMesh(), "LeftHandSocket");
-	RightHandWeapon->SetupAttachment(GetMesh(), "RightHandSocket");
+	LeftHandWeapon->SetupAttachment(GetMesh(), "RightHipSocket");
+	RightHandWeapon->SetupAttachment(GetMesh(), "LeftHipSocket");
 
 	//// SPRING ARM
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
@@ -99,11 +97,11 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AModularCharacter::Interact);
 
-	PlayerInputComponent->BindAction<FWeaponUsedDelegate>("LeftMouseClick", IE_Pressed, this, &AModularCharacter::WeaponMouseButtonPressed, LeftHandWeapon, false);
-	PlayerInputComponent->BindAction<FWeaponUsedDelegate>("LeftMouseClick", IE_Released, this, &AModularCharacter::WeaponMouseButtonReleased, LeftHandWeapon, false);
+	PlayerInputComponent->BindAction<FWeaponUsedDelegate>("LeftMouseClick", IE_Pressed, this, &AModularCharacter::MouseButtonPressed, RightHandWeapon, true); //Right hand is dominant and so is LeftMouseButton
+	PlayerInputComponent->BindAction<FWeaponUsedDelegate>("LeftMouseClick", IE_Released, this, &AModularCharacter::MouseButtonReleased, RightHandWeapon, true);
 
-	PlayerInputComponent->BindAction<FWeaponUsedDelegate>("RightMouseClick", IE_Pressed, this, &AModularCharacter::WeaponMouseButtonPressed, RightHandWeapon, true);
-	PlayerInputComponent->BindAction<FWeaponUsedDelegate>("RightMouseClick", IE_Released, this, &AModularCharacter::WeaponMouseButtonReleased, RightHandWeapon, true);
+	PlayerInputComponent->BindAction<FWeaponUsedDelegate>("RightMouseClick", IE_Pressed, this, &AModularCharacter::MouseButtonPressed, LeftHandWeapon, false);
+	PlayerInputComponent->BindAction<FWeaponUsedDelegate>("RightMouseClick", IE_Released, this, &AModularCharacter::MouseButtonReleased, LeftHandWeapon, false);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
@@ -138,6 +136,7 @@ void AModularCharacter::Tick(float DeltaSeconds)
 		}
 		LastSeenInteractableObject = CurrentlyViewedObject;
 	}
+	
 	Super::Tick(DeltaSeconds);
 }
 
@@ -186,25 +185,34 @@ AActor* AModularCharacter::CastLineTrace()
 	return nullptr;
 }
 
-void AModularCharacter::WeaponMouseButtonPressed(UWeaponComponent* WeaponComponent, bool bIsRightHand)
+void AModularCharacter::MouseButtonPressed(UWeaponComponent* WeaponComponent, bool bIsRightHand)
 {
-	OnLeftMouseButtonClicked.Broadcast(IE_Pressed);
+	if(bIsRightHand)
+	{
+		OnLeftMouseButtonClicked.Broadcast(IE_Pressed);
+	}
+	else
+	{
+		OnRightMouseButtonClicked.Broadcast(IE_Pressed);
+	}
+
+	PrintInfo(WeaponComponent->GetName());
  	
- 	if(LeftHandWeapon->IsWeaponEquipped() && CharacterState !=  ECharacterState::ATTACK)
+ 	if(WeaponComponent->IsWeaponEquipped() && CharacterState !=  ECharacterState::ATTACK)
  	{
- 		LeftHandWeapon->WeaponItem->MouseButtonPressed(this, bIsRightHand);
+ 		WeaponComponent->WeaponItem->MouseButtonPressed(this, bIsRightHand);
  	}
  
- 	if(LeftHandWeapon->IsWeaponAtRest()  && CharacterState !=  ECharacterState::EQUIP)
+ 	if(WeaponComponent->IsWeaponAtRest()  && CharacterState !=  ECharacterState::EQUIP)
  	{
- 		LeftHandWeapon->PlayEquipAnimation(this);
+ 		WeaponComponent->PlayEquipAnimation(this);
  	}
 }
 
-void AModularCharacter::WeaponMouseButtonReleased(UWeaponComponent* WeaponComponent, bool bIsRightHand)
+void AModularCharacter::MouseButtonReleased(UWeaponComponent* WeaponComponent, bool bIsRightHand)
 {
-	if (LeftHandWeapon->IsWeaponEquipped())
- 		LeftHandWeapon->WeaponItem->MouseButtonPressed(this, bIsRightHand);
+	if (WeaponComponent->IsWeaponEquipped())
+ 		WeaponComponent->WeaponItem->MouseButtonReleased(this, bIsRightHand);
 }
 
 void AModularCharacter::OnActorLoaded()

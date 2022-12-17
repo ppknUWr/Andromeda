@@ -22,4 +22,7 @@ public:
 	UPROPERTY(EditAnywhere, DisplayName = "Should Equip?")
 	bool bShouldEquip = true;
 
+	UPROPERTY(EditAnywhere)
+	bool bIsForRightHand = true;
+
 };

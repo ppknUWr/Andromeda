@@ -16,8 +16,8 @@ class USkeletalMeshComponent;
 UENUM(BlueprintType)
 enum EPreferableHand
 {
-	LeftHand	UMETA(DisplayName = "Left Hand"),
 	RightHand	UMETA(DisplayName = "Right Hand"),
+	LeftHand	UMETA(DisplayName = "Left Hand"),
 	BothHands	UMETA(DisplayName = "Both Hands")
 };
 
@@ -47,6 +47,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	TEnumAsByte<EPreferableHand> PreferableHand;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta=(EditCondition="PreferableHand == BothHands"))
+	bool bIsTwoHandedWeaponForRightHand = true;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	USkeletalMesh* AttachMesh;

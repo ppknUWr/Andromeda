@@ -3,6 +3,7 @@
 
 #include "ComboWindowNotifyState.h"
 
+#include "Andromeda/Andromeda.h"
 #include "Andromeda/Character/ModularCharacter.h"
 #include "Andromeda/Components/WeaponComponent.h"
 #include "Andromeda/Items/SideArmsWeaponItem.h"
@@ -31,7 +32,7 @@ void UComboWindowNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimS
 
 		if(bComboTriggered)
 		{
-			const USideArmsWeaponItem* WeaponItem = Cast<USideArmsWeaponItem>(ModularCharacter->LeftHandWeapon->WeaponItem);
+			const USideArmsWeaponItem* WeaponItem = Cast<USideArmsWeaponItem>(ModularCharacter->RightHandWeapon->WeaponItem);
 
 			ModularCharacter->ComboCounter++;
 			WeaponItem->AttackWithCombo(ModularCharacter->GetMesh(), ModularCharacter->ComboCounter);
@@ -49,5 +50,6 @@ void UComboWindowNotifyState::PerformCombo(EInputEvent InputEvent)
 	if(InputEvent == IE_Pressed)
 	{
 		bComboTriggered = true;
+		PrintInfo("Combo triggered");
 	}
 }

@@ -14,6 +14,7 @@ class UInventoryComponent;
 class UWeaponComponent;
 class UCoins;
 
+DECLARE_DELEGATE_TwoParams(FWeaponUsedDelegate, UWeaponComponent*, bool);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnButtonClicked, EInputEvent, InputEvent);
 
 UCLASS(Abstract)
@@ -113,8 +114,8 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	AActor* LastSeenInteractableObject = nullptr;
 	
-	void WeaponMouseButtonPressed(UWeaponComponent* WeaponComponent, bool bIsRightHand);
-	void WeaponMouseButtonReleased(UWeaponComponent* WeaponComponent, bool bIsRightHand);
+	void MouseButtonPressed(UWeaponComponent* WeaponComponent, bool bIsRightHand);
+	void MouseButtonReleased(UWeaponComponent* WeaponComponent, bool bIsRightHand);
 	
 	float WalkSpeed = 600;
 	float SprintSpeed = 1100;
