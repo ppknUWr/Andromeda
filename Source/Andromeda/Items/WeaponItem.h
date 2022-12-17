@@ -48,7 +48,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	TEnumAsByte<EPreferableHand> PreferableHand;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta=(EditCondition="PreferableHand == BothHands"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta=(EditCondition="PreferableHand == EPreferableHand::BothHands"))
 	bool bIsTwoHandedWeaponForRightHand = true;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")

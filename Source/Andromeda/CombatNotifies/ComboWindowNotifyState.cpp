@@ -50,6 +50,5 @@ void UComboWindowNotifyState::PerformCombo(EInputEvent InputEvent)
 	if(InputEvent == IE_Pressed)
 	{
 		bComboTriggered = true;
-		PrintInfo("Combo triggered");
 	}
 }

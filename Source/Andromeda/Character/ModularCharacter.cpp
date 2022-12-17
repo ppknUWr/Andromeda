@@ -195,8 +195,6 @@ void AModularCharacter::MouseButtonPressed(UWeaponComponent* WeaponComponent, bo
 	{
 		OnRightMouseButtonClicked.Broadcast(IE_Pressed);
 	}
-
-	PrintInfo(WeaponComponent->GetName());
  	
  	if(WeaponComponent->IsWeaponEquipped() && CharacterState !=  ECharacterState::ATTACK)
  	{
