@@ -19,7 +19,7 @@ void UAttackAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnim
 
 	if(AModularCharacter* ModularCharacter = Cast<AModularCharacter>(MeshComp->GetOwner()))
 	{
-		Weapon = ModularCharacter->Weapon;
+		Weapon = (bIsForRightHand) ? ModularCharacter->RightHandWeapon : ModularCharacter->LeftHandWeapon;
 		TraceSockets = Weapon->SkeletalMesh->GetActiveSocketList();// collect all sockets
 	
 		for(int i = 0; i < TraceSockets.Num(); i++)
@@ -53,8 +53,12 @@ void UAttackAnimNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimS
 			if(AModularCharacter* ModularCharacter = Cast<AModularCharacter>(MeshComp->GetOwner()))
 			{
 				AController* Instigator = ModularCharacter->GetController();
-			
-				UGameplayStatics::ApplyDamage(HitResult.GetActor(), Weapon->WeaponItem->Damage, Instigator, Weapon->GetOwner(), UDamageType::StaticClass());
+				if(AModularCharacter* Victim = Cast<AModularCharacter>(HitResult.GetActor()))
+				{
+					bool bIsBehind = ModularCharacter->GetActorForwardVector().Equals(Victim->GetActorForwardVector(), 0.2);
+					if(Victim->CharacterState != ECharacterState::DEFFEND || (Victim->CharacterState == ECharacterState::DEFFEND && bIsBehind))
+						UGameplayStatics::ApplyDamage(Victim, Weapon->WeaponItem->Damage, Instigator, Weapon->GetOwner(), UDamageType::StaticClass());
+				}
 
 				FName WeaponName = Weapon->WeaponItem->WeaponStatisticName;
 

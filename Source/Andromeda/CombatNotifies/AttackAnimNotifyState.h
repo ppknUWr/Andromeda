@@ -20,6 +20,9 @@ public:
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
 	
 	virtual void NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference) override;
+
+	UPROPERTY(EditAnywhere)
+	bool bIsForRightHand = true;
 	
 	UPROPERTY()
 	TArray<AActor*> IgnoreActors;

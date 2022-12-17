@@ -13,6 +13,14 @@
 class USkeletalMesh;
 class USkeletalMeshComponent;
 
+UENUM(BlueprintType)
+enum EPreferableHand
+{
+	RightHand	UMETA(DisplayName = "Right Hand"),
+	LeftHand	UMETA(DisplayName = "Left Hand"),
+	BothHands	UMETA(DisplayName = "Both Hands")
+};
+
 
 UCLASS()
 class ANDROMEDA_API UWeaponItem : public UItem
@@ -36,6 +44,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta=(GetOptions="GetWeapons"))
 	FName WeaponStatisticName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	TEnumAsByte<EPreferableHand> PreferableHand;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta=(EditCondition="PreferableHand == BothHands"))
+	bool bIsTwoHandedWeaponForRightHand = true;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	USkeletalMesh* AttachMesh;
@@ -47,17 +61,10 @@ public:
 	UAnimMontage* AttackMontage;
 	
 	UFUNCTION(BlueprintNativeEvent)
-	void LeftMousePressed(AModularCharacter* ModularCharacter);
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void LeftMouseReleased(AModularCharacter* ModularCharacter);
+	void MouseButtonPressed(AModularCharacter* ModularCharacter, bool bIsRightHand);
 	
-    UFUNCTION(BlueprintImplementableEvent)
-    void RightMousePressed(AModularCharacter* ModularCharacter);
-
-    UFUNCTION(BlueprintImplementableEvent)
-    void RightMouseReleased(AModularCharacter* ModularCharacter);
-
+    UFUNCTION(BlueprintNativeEvent)
+    void MouseButtonReleased(AModularCharacter* ModularCharacter, bool bIsRightHand);
 private:
 	
 	UFUNCTION()

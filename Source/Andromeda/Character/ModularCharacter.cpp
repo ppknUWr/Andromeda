@@ -18,7 +18,6 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-
 // Sets default values
 AModularCharacter::AModularCharacter()
 {
@@ -37,8 +36,10 @@ AModularCharacter::AModularCharacter()
 		BodyParts[i]->SetMasterPoseComponent(GetMesh());
 	}
 
-	Weapon = CreateDefaultSubobject<UWeaponComponent>("Weapon");
-	Weapon->SetupAttachment(GetMesh(), "LeftHipSocket");
+	LeftHandWeapon = CreateDefaultSubobject<UWeaponComponent>("LeftHandWeapon");
+	RightHandWeapon = CreateDefaultSubobject<UWeaponComponent>("RightHandWeapon");
+	LeftHandWeapon->SetupAttachment(GetMesh(), "RightHipSocket");
+	RightHandWeapon->SetupAttachment(GetMesh(), "LeftHipSocket");
 
 	//// SPRING ARM
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
@@ -95,10 +96,13 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &APawn::AddControllerPitchInput);
 	
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AModularCharacter::Interact);
-
-	PlayerInputComponent->BindAction("LeftMouseClick", IE_Pressed, this, &AModularCharacter::LeftMouseClick);
-	PlayerInputComponent->BindAction("LeftMouseClick", IE_Released, this, &AModularCharacter::LeftMouseRelease);
 	
+	PlayerInputComponent->BindAction<FWeaponUsedDelegate>("LeftMouseClick", IE_Pressed, this, &AModularCharacter::MouseButtonPressed, RightHandWeapon, true); //Right hand is dominant and so is LeftMouseButton
+	PlayerInputComponent->BindAction<FWeaponUsedDelegate>("LeftMouseClick", IE_Released, this, &AModularCharacter::MouseButtonReleased, RightHandWeapon, true);
+
+	PlayerInputComponent->BindAction<FWeaponUsedDelegate>("RightMouseClick", IE_Pressed, this, &AModularCharacter::MouseButtonPressed, LeftHandWeapon, false);
+	PlayerInputComponent->BindAction<FWeaponUsedDelegate>("RightMouseClick", IE_Released, this, &AModularCharacter::MouseButtonReleased, LeftHandWeapon, false);
+
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
@@ -132,6 +136,7 @@ void AModularCharacter::Tick(float DeltaSeconds)
 		}
 		LastSeenInteractableObject = CurrentlyViewedObject;
 	}
+	
 	Super::Tick(DeltaSeconds);
 }
 
@@ -180,25 +185,39 @@ AActor* AModularCharacter::CastLineTrace()
 	return nullptr;
 }
 
-void AModularCharacter::LeftMouseClick()
+void AModularCharacter::MouseButtonPressed(UWeaponComponent* WeaponComponent, bool bIsRightHand)
 {
-	OnLeftMouseButtonClicked.Broadcast(IE_Pressed);
-	
-	if(Weapon->IsWeaponEquipped() && CharacterState !=  ECharacterState::ATTACK)
+	if(bIsRightHand)
 	{
-		Weapon->WeaponItem->LeftMousePressed(this);
+		OnLeftMouseButtonClicked.Broadcast(IE_Pressed);
+	}
+	else
+	{
+		OnRightMouseButtonClicked.Broadcast(IE_Pressed);
 	}
 
-	if(Weapon->IsWeaponAtRest()  && CharacterState !=  ECharacterState::EQUIP)
-	{
-		Weapon->PlayEquipAnimation(this);
-	}
+	PrintInfo(WeaponComponent->GetName());
+ 	
+ 	if(WeaponComponent->IsWeaponEquipped() && CharacterState !=  ECharacterState::ATTACK)
+ 	{
+ 		WeaponComponent->WeaponItem->MouseButtonPressed(this, bIsRightHand);
+ 	}
+ 
+ 	if(WeaponComponent->IsWeaponAtRest()  && CharacterState !=  ECharacterState::EQUIP)
+ 	{
+ 		WeaponComponent->PlayEquipAnimation(this);
+ 	}
 }
 
-void AModularCharacter::LeftMouseRelease()
+void AModularCharacter::MouseButtonReleased(UWeaponComponent* WeaponComponent, bool bIsRightHand)
 {
-	if(Weapon->IsWeaponEquipped())
-		Weapon->WeaponItem->LeftMouseReleased(this);
+	if (WeaponComponent->IsWeaponEquipped())
+ 		WeaponComponent->WeaponItem->MouseButtonReleased(this, bIsRightHand);
+}
+
+void AModularCharacter::OnActorLoaded()
+{
+	
 }
 
 void AModularCharacter::ZoomIn()
@@ -222,7 +241,6 @@ void AModularCharacter::ZoomOut()
 		SpringArm->bUsePawnControlRotation = true;
 	}
 	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength + 10.f, 150.f, 450.f);
-
 }
 
 void AModularCharacter::SetCurrentStat(float FCharacterStats::* StatsField, float Value)

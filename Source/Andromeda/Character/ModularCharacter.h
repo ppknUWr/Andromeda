@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CharacterStats.h"
+#include "Andromeda/SaveSystem/SaveableInterface.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ModularCharacter.generated.h"
@@ -14,11 +15,13 @@ class UWeaponComponent;
 class UCoins;
 class AThrowableActor;
 
+DECLARE_DELEGATE_TwoParams(FWeaponUsedDelegate, UWeaponComponent*, bool);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnButtonClicked, EInputEvent, InputEvent);
 
 UCLASS(Abstract)
-class ANDROMEDA_API AModularCharacter : public ACharacter
+class ANDROMEDA_API AModularCharacter : public ACharacter, public ISaveableInterface
 {
+
 	GENERATED_BODY()
 
 public:
@@ -43,19 +46,27 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class USpringArmComponent* SpringArm;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Components")
+	UWeaponComponent* LeftHandWeapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Components")
+	UWeaponComponent* RightHandWeapon;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame)
 	FCharacterStats CurrentsStats;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame)
 	FCharacterStats MaxStats;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame)
 	FCharacterStats StatsEXP;
 	
 	void SetCurrentStat(float FCharacterStats::* StatsField, float Value);
 	void SetMaxStat(float FCharacterStats::* StatsField, float Value);
 	void SetStatExp(float FCharacterStats::* StatsField, float Value);
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, SaveGame)
 	TMap<FName, float> WeaponsStats;
 
 	UFUNCTION(BlueprintCallable)
@@ -80,9 +91,6 @@ public:
 	//Return true if Stamina is above 0
 	UFUNCTION(BlueprintCallable)
 	bool UseStamina(float StaminaToUse);
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UWeaponComponent* Weapon;
 	
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	ECharacterState CharacterState = ECharacterState::IDLE;
@@ -110,8 +118,8 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	AActor* LastSeenInteractableObject = nullptr;
 	
-	void LeftMouseClick();
-	void LeftMouseRelease();
+	void MouseButtonPressed(UWeaponComponent* WeaponComponent, bool bIsRightHand);
+	void MouseButtonReleased(UWeaponComponent* WeaponComponent, bool bIsRightHand);
 	
 	float WalkSpeed = 600;
 	float SprintSpeed = 1100;
@@ -119,7 +127,8 @@ protected:
 	void ZoomIn();
 	void ZoomOut();
 
-
+	virtual void OnActorLoaded() override;
+	
 public:
 	
 	FORCEINLINE void MoveForward(float Value) { AddMovementInput(GetActorForwardVector(), Value); }
