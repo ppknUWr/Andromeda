@@ -10,6 +10,7 @@
 #include "ModularCharacter.generated.h"
 
 class UItem;
+class UActionComponent;
 class UInventoryComponent;
 class UWeaponComponent;
 class UCoins;
@@ -47,6 +48,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class USpringArmComponent* SpringArm;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UActionComponent* ActionComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Components")
 	UWeaponComponent* LeftHandWeapon;

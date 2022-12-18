@@ -3,7 +3,8 @@
 
 #include "ModularCharacter.h"
 
-#include "Andromeda/Andromeda.h"
+#include "Andromeda/Actions/AttackAction.h"
+#include "Andromeda/Components/ActionComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -36,6 +37,10 @@ AModularCharacter::AModularCharacter()
 		BodyParts[i]->SetMasterPoseComponent(GetMesh());
 	}
 
+	//// ACTION COMPONENT
+	ActionComponent = CreateDefaultSubobject<UActionComponent>("ActionComponent");
+
+	//// WEAPONS
 	LeftHandWeapon = CreateDefaultSubobject<UWeaponComponent>("LeftHandWeapon");
 	RightHandWeapon = CreateDefaultSubobject<UWeaponComponent>("RightHandWeapon");
 	LeftHandWeapon->SetupAttachment(GetMesh(), "RightHipSocket");
@@ -196,15 +201,7 @@ void AModularCharacter::MouseButtonPressed(UWeaponComponent* WeaponComponent, bo
 		OnRightMouseButtonClicked.Broadcast(IE_Pressed);
 	}
  	
- 	if(WeaponComponent->IsWeaponEquipped() && CharacterState !=  ECharacterState::ATTACK)
- 	{
- 		WeaponComponent->WeaponItem->MouseButtonPressed(this, bIsRightHand);
- 	}
- 
- 	if(WeaponComponent->IsWeaponAtRest()  && CharacterState !=  ECharacterState::EQUIP)
- 	{
- 		WeaponComponent->PlayEquipAnimation(this);
- 	}
+ 	ActionComponent->AddAction(UAttackAction::StaticClass());
 }
 
 void AModularCharacter::MouseButtonReleased(UWeaponComponent* WeaponComponent, bool bIsRightHand)
