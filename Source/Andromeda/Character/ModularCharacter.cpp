@@ -14,6 +14,7 @@
 #include "Andromeda/Items/Item.h"
 #include "Andromeda/Items/Coins.h"
 #include "Andromeda/Interfaces/Interactable.h"
+#include "Blueprint/UserWidget.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -69,7 +70,7 @@ AModularCharacter::AModularCharacter()
 	
 	for(FName WeaponStatName : UWeaponItem::GetWeapons())
 		WeaponsStats.FindOrAdd(WeaponStatName, 0);
-
+	
 }
 
 
@@ -127,6 +128,18 @@ void AModularCharacter::BeginPlay()
 void AModularCharacter::Tick(float DeltaSeconds)
 {
 	AActor* CurrentlyViewedObject = CastLineTrace();
+	if(InteractionWidgetRef)
+	{
+		if(CurrentlyViewedObject)
+		{
+			InteractionWidgetRef->SetVisibility(ESlateVisibility::Visible);
+		}
+		else
+		{
+			InteractionWidgetRef->SetVisibility(ESlateVisibility::Hidden);
+		}
+		
+	}
 
 	if( CurrentlyViewedObject != LastSeenInteractableObject)
 	{
@@ -161,7 +174,7 @@ void AModularCharacter::ApplyRagdoll()
 
 void AModularCharacter::InteractWithActor(AActor* InteractableActor)
 {
-	if(InteractableActor != nullptr)
+	if( InteractableActor != nullptr )
 	{
 		IInteractable::Execute_Interact(InteractableActor,this);
 	}
