@@ -28,6 +28,12 @@ AThrowableActor::AThrowableActor()
 	
 }
 
+void AThrowableActor::ChangeItem(TSubclassOf<UWeaponItem> ItemClass)
+{
+	WeaponItem = NewObject<UWeaponItem>(this, ItemClass);
+	StaticMesh->SetStaticMesh(WeaponItem->PickupMesh);
+}
+
 // Called when the game starts or when spawned
 void AThrowableActor::BeginPlay()
 {
