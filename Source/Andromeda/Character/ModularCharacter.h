@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "CharacterStats.h"
 #include "Andromeda/SaveSystem/SaveableInterface.h"
+#include "Blueprint/UserWidget.h"
+#include "Components/Widget.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ModularCharacter.generated.h"
@@ -108,6 +110,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	AThrowableActor* SpawnThrowableActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UUserWidget* InteractionWidgetRef;
 protected:
 
 	void ApplyRagdoll();
