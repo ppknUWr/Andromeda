@@ -30,7 +30,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeWeapon(UWeaponItem* NewWeapon);
-	
+
+	UFUNCTION(BlueprintCallable)
 	void PlayEquipAnimation(AModularCharacter* ModularCharacter);
 
 protected:
