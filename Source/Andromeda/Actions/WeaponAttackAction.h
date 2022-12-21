@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Action.h"
-#include "AttackAction.generated.h"
+#include "SidearmsAttackAction.generated.h"
 
 /**
  * 
@@ -13,7 +13,7 @@
 class AModularCharacter;
 
 UCLASS()
-class ANDROMEDA_API UAttackAction : public UAction
+class ANDROMEDA_API USidearmsAttackAction : public UAction
 {
 
 	GENERATED_BODY()
@@ -21,8 +21,5 @@ class ANDROMEDA_API UAttackAction : public UAction
 public:
     virtual void StartAction_Implementation(AActor* Instigator) override;
     virtual void StopAction_Implementation(AActor* Instigator) override;
-
-protected:
-	UPROPERTY()
-	AModularCharacter* ModularCharacter;
+	
 };
