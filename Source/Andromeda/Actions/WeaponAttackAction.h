@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Action.h"
-#include "SidearmsAttackAction.generated.h"
+#include "WeaponAttackAction.generated.h"
 
 /**
  * 
@@ -20,6 +20,8 @@ class ANDROMEDA_API USidearmsAttackAction : public UAction
 	
 public:
     virtual void StartAction_Implementation(AActor* Instigator) override;
-    virtual void StopAction_Implementation(AActor* Instigator) override;
-	
+
+private:
+	UFUNCTION()
+	void FinishedMontageInternal(UAnimMontage* AnimMontage, bool bInterrupted);
 };

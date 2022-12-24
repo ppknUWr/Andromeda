@@ -1,15 +1,15 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SideArmsWeaponItem.h"
+#include "SidearmsWeaponItem.h"
 #include "Andromeda/Character/ModularCharacter.h"
 
-void USideArmsWeaponItem::MouseButtonPressed_Implementation(AModularCharacter* ModularCharacter, bool bIsRightHand)
+void USidearmsWeaponItem::MouseButtonPressed_Implementation(AModularCharacter* ModularCharacter, bool bIsRightHand)
 {
 	AttackWithCombo(ModularCharacter->GetMesh(), 0);
 }
 
-void USideArmsWeaponItem::AttackWithCombo(USkeletalMeshComponent* MeshComponent, int32 ComboIndex) const
+void USidearmsWeaponItem::AttackWithCombo(USkeletalMeshComponent* MeshComponent, int32 ComboIndex) const
 {
 	//copied & modified from ACharacter::PlayAnimMontage -> we want to change sections in current montage, not to play another
 	UAnimInstance * AnimInstance = (MeshComponent)? MeshComponent->GetAnimInstance() : nullptr; 

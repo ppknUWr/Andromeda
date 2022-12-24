@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Item.h"
-#include "Andromeda/Character/CharacterStats.h"
 #include "WeaponItem.generated.h"
 
 /**
  * 
  */
+class UAction;
 class USkeletalMesh;
 class USkeletalMeshComponent;
 
@@ -59,6 +59,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	UAnimMontage* AttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	TSubclassOf<UAction> ActionClass;
 	
 	UFUNCTION(BlueprintNativeEvent)
 	void MouseButtonPressed(AModularCharacter* ModularCharacter, bool bIsRightHand);

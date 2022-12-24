@@ -6,7 +6,7 @@
 #include "Andromeda/Andromeda.h"
 #include "Andromeda/Character/ModularCharacter.h"
 #include "Andromeda/Components/WeaponComponent.h"
-#include "Andromeda/Items/SideArmsWeaponItem.h"
+#include "Andromeda/Items/SidearmsWeaponItem.h"
 
 
 void UComboWindowNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
@@ -32,7 +32,7 @@ void UComboWindowNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimS
 
 		if(bComboTriggered)
 		{
-			const USideArmsWeaponItem* WeaponItem = Cast<USideArmsWeaponItem>(ModularCharacter->RightHandWeapon->WeaponItem);
+			const USidearmsWeaponItem* WeaponItem = Cast<USidearmsWeaponItem>(ModularCharacter->RightHandWeapon->WeaponItem);
 
 			ModularCharacter->ComboCounter++;
 			WeaponItem->AttackWithCombo(ModularCharacter->GetMesh(), ModularCharacter->ComboCounter);

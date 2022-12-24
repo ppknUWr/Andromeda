@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "WeaponItem.h"
-#include "SideArmsWeaponItem.generated.h"
+#include "SidearmsWeaponItem.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ANDROMEDA_API USideArmsWeaponItem : public UWeaponItem
+class ANDROMEDA_API USidearmsWeaponItem : public UWeaponItem
 {
 	GENERATED_BODY()
 

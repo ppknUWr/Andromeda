@@ -2,19 +2,16 @@
 
 
 #include "ModularCharacter.h"
-
-#include "Andromeda/Actions/AttackAction.h"
 #include "Andromeda/Components/ActionComponent.h"
+#include "Andromeda/Components/InventoryComponent.h"
+#include "Andromeda/Components/WeaponComponent.h"
+#include "Andromeda/Items/WeaponItem.h"
+#include "Andromeda/Items/Coins.h"
+#include "Andromeda/Interfaces/Interactable.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "Andromeda/Components/InventoryComponent.h"
-#include "Andromeda/Components/WeaponComponent.h"
-#include "Andromeda/Items/WeaponItem.h"
-#include "Andromeda/Items/Item.h"
-#include "Andromeda/Items/Coins.h"
-#include "Andromeda/Interfaces/Interactable.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -200,8 +197,11 @@ void AModularCharacter::MouseButtonPressed(UWeaponComponent* WeaponComponent, bo
 	{
 		OnRightMouseButtonClicked.Broadcast(IE_Pressed);
 	}
- 	
- 	ActionComponent->AddAction(UAttackAction::StaticClass());
+	
+	if(WeaponComponent->WeaponItem)
+	{
+		ActionComponent->AddAction(WeaponComponent->WeaponItem->ActionClass);
+	}
 }
 
 void AModularCharacter::MouseButtonReleased(UWeaponComponent* WeaponComponent, bool bIsRightHand)

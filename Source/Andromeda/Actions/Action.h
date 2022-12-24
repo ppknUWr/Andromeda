@@ -10,6 +10,8 @@
  * 
  */
 class UAction;
+class AModularCharacter;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActionStarted, UAction*, Action);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActionInterrupted, UAction*, Action);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActionFinished, UAction*, Action);
@@ -30,6 +32,12 @@ public:
 	void StartAction(AActor* Instigator);
 
 	UFUNCTION(BlueprintNativeEvent)
+	void OnKeyPressed(FKey Key);
+	
+	UFUNCTION(BlueprintNativeEvent)
+    void OnKeyReleased(FKey Key);
+
+	UFUNCTION(BlueprintNativeEvent)
 	void StopAction(AActor* Instigator);
 
 	UPROPERTY(BlueprintAssignable)
@@ -40,4 +48,8 @@ public:
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnActionFinished ActionFinished;
+
+protected:
+	UPROPERTY(BlueprintReadWrite)
+	AModularCharacter* ModularCharacter;
 };

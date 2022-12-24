@@ -24,13 +24,16 @@ public:
 
 protected:
 
-	UPROPERTY()
-	TArray<UAction*> ActionQueue;
+	UPROPERTY(VisibleAnywhere)
+	UAction* CurrentAction = nullptr;
+
+	UPROPERTY(VisibleAnywhere)
+	UAction* QueuedAction = nullptr;
 
 	UFUNCTION(BlueprintCallable)
 	void StartAction();
 
-
+	UFUNCTION()
 	void ActionStopped(UAction* Action);
 	
 	// Called when the game starts

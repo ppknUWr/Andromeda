@@ -2,6 +2,8 @@
 
 
 #include "ActionComponent.h"
+
+#include "Andromeda/Andromeda.h"
 #include "Andromeda/Actions/Action.h"
 
 // Sets default values for this component's properties
@@ -19,27 +21,39 @@ UAction* UActionComponent::AddAction(TSubclassOf<UAction> NewActionClass)
 		return nullptr;
 	}
 
-	UAction* NewAction = NewObject<UAction>(this, NewActionClass);
+	UAction* NewAction = NewObject<UAction>(GetOwner(), NewActionClass);
+	PrintInfo(NewAction->GetName());
 
-	ActionQueue.Add(NewAction);
-	StartAction();
-
+	if(CurrentAction == nullptr)
+	{
+		CurrentAction = NewAction;
+		StartAction();
+	}
+	else
+	{
+		QueuedAction = NewAction;
+	}
+	
 	return NewAction;
 }
 
 
 void UActionComponent::StartAction()
 {
-	if(UAction* Action = ActionQueue[0])
+	if(CurrentAction)
 	{
-		Action->StartAction(GetOwner());
-		Action->ActionFinished.AddDynamic(this, &UActionComponent::ActionStopped);
+		CurrentAction->StartAction(GetOwner());
+		CurrentAction->ActionFinished.AddDynamic(this, &UActionComponent::ActionStopped);
 	}
 }
 
 void UActionComponent::ActionStopped(UAction* Action)
 {
 	Action->ActionFinished.RemoveDynamic(this, &UActionComponent::ActionStopped);
+	
+	CurrentAction = QueuedAction;
+	QueuedAction = nullptr;
+	
 	StartAction(); //Start another queued action
 }
 
