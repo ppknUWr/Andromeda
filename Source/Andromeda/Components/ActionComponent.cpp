@@ -22,7 +22,11 @@ UAction* UActionComponent::AddAction(TSubclassOf<UAction> NewActionClass)
 	}
 
 	UAction* NewAction = NewObject<UAction>(GetOwner(), NewActionClass);
-	PrintInfo(NewAction->GetName());
+
+	if(!NewAction)
+	{
+		return nullptr;
+	}
 
 	if(CurrentAction == nullptr)
 	{
@@ -47,10 +51,8 @@ void UActionComponent::StartAction()
 	}
 }
 
-void UActionComponent::ActionStopped(UAction* Action)
+void UActionComponent::ActionStopped()
 {
-	Action->ActionFinished.RemoveDynamic(this, &UActionComponent::ActionStopped);
-	
 	CurrentAction = QueuedAction;
 	QueuedAction = nullptr;
 	

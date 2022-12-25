@@ -34,7 +34,7 @@ protected:
 	void StartAction();
 
 	UFUNCTION()
-	void ActionStopped(UAction* Action);
+	void ActionStopped();
 	
 	// Called when the game starts
 	virtual void BeginPlay() override;

@@ -28,13 +28,12 @@ void USidearmsAttackAction::StartAction_Implementation(AActor* Instigator)
 		{
 			ModularCharacter->RightHandWeapon->PlayEquipAnimation(ModularCharacter);
 		}
-		PrintInfo(ModularCharacter->GetMesh()->GetAnimInstance()->GetCurrentActiveMontage()->GetName());
-		ModularCharacter->GetMesh()->GetAnimInstance()->OnMontageEnded.AddDynamic(this, &USidearmsAttackAction::FinishedMontageInternal);
+		//PrintInfo(ModularCharacter->GetMesh()->GetAnimInstance()->GetCurrentActiveMontage()->GetName());
+		ModularCharacter->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.AddDynamic(this, &USidearmsAttackAction::FinishedMontageInternal);
 	}
 }
 
 void USidearmsAttackAction::FinishedMontageInternal(UAnimMontage* AnimMontage, bool bInterrupted)
 {
 	StopAction(ModularCharacter);
-	PrintInfo("Montage Ended");
 }

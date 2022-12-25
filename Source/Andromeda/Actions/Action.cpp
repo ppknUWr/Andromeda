@@ -27,7 +27,7 @@ void UAction::OnKeyPressed_Implementation(FKey Key)
 
 void UAction::StopAction_Implementation(AActor* Instigator)
 {
-	ActionFinished.Broadcast(this);
+	ActionFinished.Broadcast();
 }
 
 

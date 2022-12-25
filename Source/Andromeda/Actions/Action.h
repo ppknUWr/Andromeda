@@ -14,7 +14,7 @@ class AModularCharacter;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActionStarted, UAction*, Action);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActionInterrupted, UAction*, Action);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActionFinished, UAction*, Action);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnActionFinished);
 
 UCLASS()
 class ANDROMEDA_API UAction : public UObject
