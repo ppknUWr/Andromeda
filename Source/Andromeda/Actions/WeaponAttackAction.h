@@ -13,12 +13,15 @@
 class AModularCharacter;
 
 UCLASS()
-class ANDROMEDA_API USidearmsAttackAction : public UAction
+class ANDROMEDA_API UWeaponAttackAction : public UAction
 {
 
 	GENERATED_BODY()
 	
 public:
+
+	UWeaponAttackAction();
+	
     virtual void StartAction_Implementation(AActor* Instigator) override;
 
 private:

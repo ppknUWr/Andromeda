@@ -2,14 +2,16 @@
 
 
 #include "WeaponAttackAction.h"
-
-#include "Andromeda/Andromeda.h"
 #include "Andromeda/Character/ModularCharacter.h"
 #include "Andromeda/Components/WeaponComponent.h"
 #include "Andromeda/Items/WeaponItem.h"
 
 
-void USidearmsAttackAction::StartAction_Implementation(AActor* Instigator)
+UWeaponAttackAction::UWeaponAttackAction()
+{
+}
+
+void UWeaponAttackAction::StartAction_Implementation(AActor* Instigator)
 {
 	Super::StartAction_Implementation(Instigator);
 
@@ -18,22 +20,22 @@ void USidearmsAttackAction::StartAction_Implementation(AActor* Instigator)
 		return;
 	}
 
-	if(ModularCharacter->GetLocalViewingPlayerController()->WasInputKeyJustPressed(EKeys::LeftMouseButton))
+
+	if(!ModularCharacter->RightHandWeapon->IsWeaponEquipped())
 	{
-		if(ModularCharacter->RightHandWeapon->IsWeaponEquipped())
-		{
-			ModularCharacter->RightHandWeapon->WeaponItem->MouseButtonPressed(ModularCharacter, true);
-		}
-		else
-		{
-			ModularCharacter->RightHandWeapon->PlayEquipAnimation(ModularCharacter);
-		}
-		//PrintInfo(ModularCharacter->GetMesh()->GetAnimInstance()->GetCurrentActiveMontage()->GetName());
-		ModularCharacter->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.AddDynamic(this, &USidearmsAttackAction::FinishedMontageInternal);
+		ModularCharacter->RightHandWeapon->PlayEquipAnimation(ModularCharacter);
 	}
+	else
+	{
+		ModularCharacter->RightHandWeapon->WeaponItem->MouseButtonPressed(ModularCharacter, true);
+	}
+	
+	//PrintInfo(ModularCharacter->GetMesh()->GetAnimInstance()->GetCurrentActiveMontage()->GetName());
+	ModularCharacter->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.AddDynamic(this, &UWeaponAttackAction::FinishedMontageInternal);
+	
 }
 
-void USidearmsAttackAction::FinishedMontageInternal(UAnimMontage* AnimMontage, bool bInterrupted)
+void UWeaponAttackAction::FinishedMontageInternal(UAnimMontage* AnimMontage, bool bInterrupted)
 {
 	StopAction(ModularCharacter);
 }

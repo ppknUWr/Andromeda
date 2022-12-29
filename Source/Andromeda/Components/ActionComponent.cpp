@@ -47,12 +47,15 @@ void UActionComponent::StartAction()
 	if(CurrentAction)
 	{
 		CurrentAction->StartAction(GetOwner());
+		PrintInfo("ActionStarted " + CurrentAction->GetName());
 		CurrentAction->ActionFinished.AddDynamic(this, &UActionComponent::ActionStopped);
 	}
 }
 
 void UActionComponent::ActionStopped()
 {
+	CurrentAction->ActionFinished.RemoveDynamic(this, &UActionComponent::ActionStopped);
+	
 	CurrentAction = QueuedAction;
 	QueuedAction = nullptr;
 	
