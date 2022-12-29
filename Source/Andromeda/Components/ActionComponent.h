@@ -18,7 +18,7 @@ public:
 	UActionComponent();
 
 	UFUNCTION(BlueprintCallable)
-	UAction* AddAction(TSubclassOf<UAction> NewActionClass);
+	UAction* AddAction(TSubclassOf<UAction> NewActionClass, bool bInterruptCurrentAction = false);
 
 	
 
@@ -36,7 +36,8 @@ protected:
 	UFUNCTION()
 	void ActionStopped();
 	
-	// Called when the game starts
-	virtual void BeginPlay() override;
+public:
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE UAction* GetCurrentAction() const { return CurrentAction; }
 		
 };

@@ -12,7 +12,7 @@ UAction::UAction()
 void UAction::StartAction_Implementation(AActor* Instigator)
 {
 	ModularCharacter = Cast<AModularCharacter>(Instigator);
-	ActionStarted.Broadcast(this);
+	ActionStarted.Broadcast();
 }
 
 void UAction::OnKeyReleased_Implementation(FKey Key)

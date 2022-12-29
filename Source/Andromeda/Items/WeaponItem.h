@@ -11,7 +11,7 @@
  */
 class UAction;
 class USkeletalMesh;
-class USkeletalMeshComponent;
+class UWeaponComponent;
 
 UENUM(BlueprintType)
 enum EPreferableHand
@@ -68,6 +68,9 @@ public:
 	
     UFUNCTION(BlueprintNativeEvent)
     void MouseButtonReleased(AModularCharacter* ModularCharacter, bool bIsRightHand);
+
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon")
+	UWeaponComponent* WeaponHand;
 private:
 	
 	UFUNCTION()

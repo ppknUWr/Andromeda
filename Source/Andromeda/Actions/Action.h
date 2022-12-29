@@ -9,11 +9,10 @@
 /**
  * 
  */
-class UAction;
 class AModularCharacter;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActionStarted, UAction*, Action);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActionInterrupted, UAction*, Action);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnActionStarted);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnActionInterrupted);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnActionFinished);
 
 UCLASS()

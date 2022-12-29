@@ -16,20 +16,24 @@ void UWeaponItem::Use(AModularCharacter* Character)
 	{
 	case RightHand:
 		Character->RightHandWeapon->ChangeWeapon(this);
+		WeaponHand = Character->RightHandWeapon;
 		break;
 	case LeftHand:
 		Character->LeftHandWeapon->ChangeWeapon(this);
+		WeaponHand = Character->LeftHandWeapon;
 		break;
 	case BothHands:
 		if(bIsTwoHandedWeaponForRightHand)
 		{
 			Character->RightHandWeapon->ChangeWeapon(this);
 			Character->LeftHandWeapon->WeaponItem = this; //make it possible for input being called with other button
+			WeaponHand = Character->RightHandWeapon;
 		}
 		else
 		{
 			Character->LeftHandWeapon->ChangeWeapon(this);
 			Character->RightHandWeapon->WeaponItem = this;
+			WeaponHand = Character->LeftHandWeapon;
 		}
 		break;
 	default:

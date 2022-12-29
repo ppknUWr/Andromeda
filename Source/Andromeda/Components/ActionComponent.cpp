@@ -2,19 +2,17 @@
 
 
 #include "ActionComponent.h"
-
 #include "Andromeda/Andromeda.h"
 #include "Andromeda/Actions/Action.h"
 
-// Sets default values for this component's properties
+
 UActionComponent::UActionComponent()
 {
 
-	PrimaryComponentTick.bCanEverTick = true;
-
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
-UAction* UActionComponent::AddAction(TSubclassOf<UAction> NewActionClass)
+UAction* UActionComponent::AddAction(TSubclassOf<UAction> NewActionClass, bool bInterruptCurrentAction)
 {
 	if(!ensure(NewActionClass))
 	{
@@ -28,7 +26,7 @@ UAction* UActionComponent::AddAction(TSubclassOf<UAction> NewActionClass)
 		return nullptr;
 	}
 
-	if(CurrentAction == nullptr)
+	if(CurrentAction == nullptr || (CurrentAction->bCanBeInterrupted && bInterruptCurrentAction))
 	{
 		CurrentAction = NewAction;
 		StartAction();
@@ -61,11 +59,4 @@ void UActionComponent::ActionStopped()
 	
 	StartAction(); //Start another queued action
 }
-
-void UActionComponent::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-
 
