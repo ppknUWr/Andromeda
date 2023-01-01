@@ -106,6 +106,23 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Items")
 	void UseItem(UItem* Item);
 
+	UFUNCTION(BlueprintCallable, Category = "Items")
+	void BuyItem(UItem* Item);
+
+	UFUNCTION(BlueprintCallable, Category = "Items")
+	void SellItem(UItem* Item);
+
+	// Most of the time it's empty, unsless player starts an interaction with trader.
+	//  Didn't had any better ideas to connect the selling of an item.
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UInventoryComponent* TraderInventory;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UCoins* TraderCoins;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool PlayerTrading;
+
 	int32 ComboCounter = 0;
 
 	UPROPERTY(BlueprintReadWrite)

@@ -67,6 +67,8 @@ AModularCharacter::AModularCharacter()
 
 	//// INITIALIZE COINS
 	Coins = CreateDefaultSubobject<UCoins>("Coins");
+
+	PlayerTrading = false;
 	
 	for(FName WeaponStatName : UWeaponItem::GetWeapons())
 		WeaponsStats.FindOrAdd(WeaponStatName, 0);
@@ -159,6 +161,48 @@ void AModularCharacter::UseItem(UItem* Item)
 	{
 		Item->Use(this);
 		Item->OnUse(this); // Blueprint event.
+	}
+}
+
+void AModularCharacter::BuyItem(UItem* Item)
+{
+	if (!Item)
+	{
+		return;
+	}
+
+	if (Coins->Coins > Item->BuyPrice)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Red, "Buy item");
+		Coins->Coins -= Item->BuyPrice;
+		TraderCoins->Coins += Item->BuyPrice;
+
+		TraderInventory->ExchangeItem(Item, Inventory);
+	}
+	else
+	{
+		// Show some UI message that user doesn't have enough coins.
+	}
+}
+
+void AModularCharacter::SellItem(UItem* Item)
+{
+	if (!Item)
+	{
+		return;
+	}
+
+	if (!TraderInventory)
+	{
+		return;
+	}
+
+	if (TraderCoins->Coins > Item->SellPrice)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Red, "Sell item");
+		TraderCoins->Coins -= Item->SellPrice;
+		Coins->Coins += Item->SellPrice;
+		Inventory->ExchangeItem(Item, TraderInventory);
 	}
 }
 
