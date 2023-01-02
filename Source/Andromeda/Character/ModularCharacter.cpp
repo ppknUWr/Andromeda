@@ -3,6 +3,8 @@
 
 #include "ModularCharacter.h"
 
+#include "Editor.h"
+#include "SkeletalMeshMerge.h"
 #include "Andromeda/Andromeda.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -18,6 +20,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "SkeletalMeshMerge.h"
 
 // Sets default values
 AModularCharacter::AModularCharacter()
@@ -70,7 +73,8 @@ AModularCharacter::AModularCharacter()
 	
 	for(FName WeaponStatName : UWeaponItem::GetWeapons())
 		WeaponsStats.FindOrAdd(WeaponStatName, 0);
-	
+
+	MergeMeshes();
 }
 
 
@@ -229,6 +233,24 @@ void AModularCharacter::MouseButtonReleased(UWeaponComponent* WeaponComponent, b
 void AModularCharacter::OnActorLoaded()
 {
 	
+}
+
+void AModularCharacter::MergeMeshes()
+{
+	TArray<USkeletalMesh*> MeshesToMerge;
+	USkeletalMesh* tmpMesh = this->GetMesh()->SkeletalMesh;
+	TArray<FSkelMeshMergeSectionMapping> t = TArray<FSkelMeshMergeSectionMapping>();
+	
+	for(auto &BodyPart : BodyParts)
+	{
+		MeshesToMerge.Emplace(BodyPart->SkeletalMesh);
+	}
+	
+	FSkeletalMeshMerge Merger = FSkeletalMeshMerge(MeshesToMerge[0], MeshesToMerge, t,0);
+
+	Merger.DoMerge();
+
+	//this->GetMesh()->SetSkeletalMesh(tmpMesh);
 }
 
 void AModularCharacter::ZoomIn()

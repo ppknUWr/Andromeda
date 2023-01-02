@@ -133,6 +133,8 @@ protected:
 	void ZoomOut();
 
 	virtual void OnActorLoaded() override;
+
+	void MergeMeshes();
 	
 public:
 	
