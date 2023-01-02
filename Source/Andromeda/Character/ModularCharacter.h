@@ -40,9 +40,6 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<USkeletalMeshComponent*> BodyParts;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class UCameraComponent* Camera;
 
@@ -56,6 +53,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Components")
 	UWeaponComponent* RightHandWeapon;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ModularCharacter|Mesh")
+	TMap<EBodyPart, TObjectPtr<USkeletalMesh>> CharacterMeshes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ModularCharacter|Mesh")
+	TObjectPtr<USkeleton> CharacterSkeleton;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame)
 	FCharacterStats CurrentsStats;
