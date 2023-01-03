@@ -56,3 +56,19 @@ bool UInventoryComponent::RemoveItem(UItem* Item)
 
 	return false;
 }
+
+bool UInventoryComponent::ExchangeItem(UItem* Item, UInventoryComponent* otherInventory)
+{
+	if (Item)
+	{
+		otherInventory->AddItem(Item);
+
+		Items.RemoveSingle(Item);
+
+		OnInventoryUpdated.Broadcast();
+
+		return true;
+	}
+
+	return false;
+}
