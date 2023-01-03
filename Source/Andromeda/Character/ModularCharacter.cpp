@@ -239,6 +239,15 @@ AActor* AModularCharacter::CastLineTrace()
 			}
 		}
 	}
+	if(UKismetSystemLibrary::LineTraceSingle(this, Start, Camera->GetForwardVector() * 20000 + Start, TraceTypeQuery2, false, {}, EDrawDebugTrace::None, HitResult, true ))
+	{
+		if (spellNumber == 2  && RightHandWeapon->WeaponItem != nullptr && Spell != nullptr && RightHandWeapon->WeaponItem->GetName().Contains("magic"))
+		{
+			lookAtPosition = HitResult.Location;
+			lookAtPosition.Z = GetActorLocation().Z+50;
+			Spell->SetActorLocation(lookAtPosition);
+		}
+	}
 	return nullptr;
 }
 

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "CharacterStats.h"
 #include "Andromeda/SaveSystem/SaveableInterface.h"
+#include "Andromeda/Spells/Spell.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Widget.h"
 #include "GameFramework/Character.h"
@@ -129,6 +130,14 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	AThrowableActor* SpawnThrowableActor;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Spell")
+	int spellNumber = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spell")
+	FVector lookAtPosition;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spell")
+	ASpell * Spell = nullptr;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UUserWidget* InteractionWidgetRef;
