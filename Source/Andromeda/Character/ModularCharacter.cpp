@@ -2,8 +2,8 @@
 
 
 #include "ModularCharacter.h"
-
-#include "Andromeda/Andromeda.h"
+#include "Editor.h"
+#include "SkeletalMeshMerge.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -18,25 +18,15 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "SkeletalMergingLibrary.h"
 
 // Sets default values
 AModularCharacter::AModularCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	//// BODY PARTS
-	BodyParts.Init(nullptr, GetBodyPartIndex(EBodyPart::COUNT));
-	for (int i = 0; i < GetBodyPartIndex(EBodyPart::COUNT); i++)
-	{
-		UEnum* BodyPartNameEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("EBodyPart"), true);
-		FName ComponentName = FName(*BodyPartNameEnum->GetDisplayNameTextByIndex(i).ToString());
-
-		BodyParts[i] = CreateDefaultSubobject<USkeletalMeshComponent>(ComponentName);
-		BodyParts[i]->SetupAttachment(GetMesh());
-		BodyParts[i]->SetMasterPoseComponent(GetMesh());
-	}
-
+	
+	//// WEAPONS
 	LeftHandWeapon = CreateDefaultSubobject<UWeaponComponent>("LeftHandWeapon");
 	RightHandWeapon = CreateDefaultSubobject<UWeaponComponent>("RightHandWeapon");
 	LeftHandWeapon->SetupAttachment(GetMesh(), "RightHipSocket");
@@ -72,7 +62,15 @@ AModularCharacter::AModularCharacter()
 	
 	for(FName WeaponStatName : UWeaponItem::GetWeapons())
 		WeaponsStats.FindOrAdd(WeaponStatName, 0);
+
+	//// ARMOUR
+	CharacterMeshes.FindOrAdd(EBodyPart::HEAD, nullptr);
+	CharacterMeshes.FindOrAdd(EBodyPart::TORSO, nullptr);
+	CharacterMeshes.FindOrAdd(EBodyPart::ARMS, nullptr);
+	CharacterMeshes.FindOrAdd(EBodyPart::LEGS, nullptr);
+	CharacterMeshes.FindOrAdd(EBodyPart::FEET, nullptr);
 	
+	MergeMeshes();
 }
 
 
@@ -125,6 +123,8 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 void AModularCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	MergeMeshes();
 }
 
 void AModularCharacter::Tick(float DeltaSeconds)
@@ -273,6 +273,19 @@ void AModularCharacter::MouseButtonReleased(UWeaponComponent* WeaponComponent, b
 void AModularCharacter::OnActorLoaded()
 {
 	
+}
+
+void AModularCharacter::MergeMeshes()
+{
+	FSkeletalMeshMergeParams SkeletalMeshMergeParams;
+	
+	TArray<TObjectPtr<USkeletalMesh>> MeshesToMerge;
+	CharacterMeshes.GenerateValueArray(MeshesToMerge);
+	
+	SkeletalMeshMergeParams.MeshesToMerge = MeshesToMerge;
+	SkeletalMeshMergeParams.Skeleton = CharacterSkeleton;
+	
+	GetMesh()->SetSkeletalMesh(USkeletalMergingLibrary::MergeMeshes(SkeletalMeshMergeParams));
 }
 
 void AModularCharacter::ZoomIn()
