@@ -59,6 +59,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	UAnimMontage* AttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	UAnimMontage* MovementMontage;
 	
 	UFUNCTION(BlueprintNativeEvent)
 	void MouseButtonPressed(AModularCharacter* ModularCharacter, bool bIsRightHand);
