@@ -16,7 +16,7 @@ class UWeaponComponent;
 class UCoins;
 class AThrowableActor;
 
-DECLARE_DELEGATE_TwoParams(FWeaponUsedDelegate, UWeaponComponent*, bool);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnComboWindowEnd);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnButtonClicked, EInputEvent, InputEvent);
 
 UCLASS(Abstract)
@@ -103,12 +103,18 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnButtonClicked OnRightMouseButtonClicked;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnComboWindowEnd OnComboWindowEnd;
 	
 	UFUNCTION(BlueprintCallable, Category = "Items")
 	void UseItem(UItem* Item);
 
 	int32 ComboCounter = 0;
-
+	
+	void MouseButtonPressed(FKey Key);
+	void MouseButtonReleased(FKey Key);
+	
 	UPROPERTY(BlueprintReadWrite)
 	AThrowableActor* SpawnThrowableActor;
 protected:
@@ -121,8 +127,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	AActor* LastSeenInteractableObject = nullptr;
 	
-	void MouseButtonPressed(UWeaponComponent* WeaponComponent, bool bIsRightHand);
-	void MouseButtonReleased(UWeaponComponent* WeaponComponent, bool bIsRightHand);
+
 	
 	float WalkSpeed = 600;
 	float SprintSpeed = 1100;

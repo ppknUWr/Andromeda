@@ -42,6 +42,11 @@ void UWeaponItem::Use(AModularCharacter* Character)
 
 }
 
+TSubclassOf<UAction> UWeaponItem::GetActionByKey_Implementation(FKey Key)
+{
+	return nullptr;
+}
+
 void UWeaponItem::MouseButtonPressed_Implementation(AModularCharacter* ModularCharacter, bool bIsRightHand)
 {
 }

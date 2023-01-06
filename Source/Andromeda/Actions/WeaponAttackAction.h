@@ -3,7 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Action.h"
+#include "WeaponAction.h"
+#include "Animation/AnimMontage.h"
 #include "WeaponAttackAction.generated.h"
 
 /**
@@ -11,9 +12,10 @@
  */
 
 class AModularCharacter;
+class UWeaponComponent;
 
 UCLASS()
-class ANDROMEDA_API UWeaponAttackAction : public UAction
+class ANDROMEDA_API UWeaponAttackAction : public UWeaponAction
 {
 
 	GENERATED_BODY()
@@ -23,8 +25,5 @@ public:
 	UWeaponAttackAction();
 	
     virtual void StartAction_Implementation(AActor* Instigator) override;
-
-private:
-	UFUNCTION()
-	void FinishedMontageInternal(UAnimMontage* AnimMontage, bool bInterrupted);
+	
 };

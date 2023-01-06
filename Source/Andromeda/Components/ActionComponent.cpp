@@ -2,7 +2,6 @@
 
 
 #include "ActionComponent.h"
-#include "Andromeda/Andromeda.h"
 #include "Andromeda/Actions/Action.h"
 
 
@@ -12,7 +11,7 @@ UActionComponent::UActionComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-UAction* UActionComponent::AddAction(TSubclassOf<UAction> NewActionClass, bool bInterruptCurrentAction)
+UAction* UActionComponent::AddAction(TSubclassOf<UAction> NewActionClass, TMap<FName, UObject*> AdditionalObjects, bool bForceInterrupt)
 {
 	if(!ensure(NewActionClass))
 	{
@@ -20,15 +19,12 @@ UAction* UActionComponent::AddAction(TSubclassOf<UAction> NewActionClass, bool b
 	}
 
 	UAction* NewAction = NewObject<UAction>(GetOwner(), NewActionClass);
+	NewAction->SetAdditionalParams(AdditionalObjects);
 
-	if(!NewAction)
-	{
-		return nullptr;
-	}
-
-	if(CurrentAction == nullptr || (CurrentAction->bCanBeInterrupted && bInterruptCurrentAction))
+	if(CurrentAction == nullptr || NewAction->bCanInterruptAction || bForceInterrupt)
 	{
 		CurrentAction = NewAction;
+		QueuedAction = nullptr;
 		StartAction();
 	}
 	else
@@ -45,7 +41,6 @@ void UActionComponent::StartAction()
 	if(CurrentAction)
 	{
 		CurrentAction->StartAction(GetOwner());
-		PrintInfo("ActionStarted " + CurrentAction->GetName());
 		CurrentAction->ActionFinished.AddDynamic(this, &UActionComponent::ActionStopped);
 	}
 }

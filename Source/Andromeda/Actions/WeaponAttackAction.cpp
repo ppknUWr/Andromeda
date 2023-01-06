@@ -14,28 +14,37 @@ UWeaponAttackAction::UWeaponAttackAction()
 void UWeaponAttackAction::StartAction_Implementation(AActor* Instigator)
 {
 	Super::StartAction_Implementation(Instigator);
+	
+	UAnimInstance * AnimInstance = ModularCharacter->GetMesh()->GetAnimInstance();
 
-	if(!ModularCharacter)
+	if(!ModularCharacter || !AnimInstance || !WeaponComponent)
 	{
 		return;
 	}
-
-
-	if(!ModularCharacter->RightHandWeapon->IsWeaponEquipped())
+	
+	if(!WeaponComponent->IsWeaponEquipped())
 	{
-		ModularCharacter->RightHandWeapon->PlayEquipAnimation(ModularCharacter);
+		WeaponComponent->PlayEquipAnimation(ModularCharacter);
+		AnimInstance->OnMontageBlendingOut.AddDynamic(this, &UWeaponAttackAction::FinishedMontageInternal);
 	}
 	else
-	{
-		ModularCharacter->RightHandWeapon->WeaponItem->MouseButtonPressed(ModularCharacter, true);
+	{   
+		if(UAnimMontage* AttackMontage =  WeaponComponent->WeaponItem->AttackMontage)
+		{
+			if(ModularCharacter->ComboCounter == 0)
+			{
+				AnimInstance->Montage_Play(AttackMontage);
+			}
+			else
+			{
+				const FName SectionName = AttackMontage->GetSectionName(ModularCharacter->ComboCounter % AttackMontage->CompositeSections.Num());
+			
+				AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
+			}
+			
+			MontageBlendingOutStarted.BindUObject(this, &UWeaponAttackAction::FinishedMontageInternal);
+			
+			AnimInstance->Montage_SetBlendingOutDelegate(MontageBlendingOutStarted, AttackMontage);
+		}
 	}
-	
-	//PrintInfo(ModularCharacter->GetMesh()->GetAnimInstance()->GetCurrentActiveMontage()->GetName());
-	ModularCharacter->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.AddDynamic(this, &UWeaponAttackAction::FinishedMontageInternal);
-	
-}
-
-void UWeaponAttackAction::FinishedMontageInternal(UAnimMontage* AnimMontage, bool bInterrupted)
-{
-	StopAction(ModularCharacter);
 }

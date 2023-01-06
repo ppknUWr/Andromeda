@@ -15,19 +15,11 @@ void UAction::StartAction_Implementation(AActor* Instigator)
 	ActionStarted.Broadcast();
 }
 
-void UAction::OnKeyReleased_Implementation(FKey Key)
-{
-	
-}
-
-void UAction::OnKeyPressed_Implementation(FKey Key)
-{
-	
-}
-
 void UAction::StopAction_Implementation(AActor* Instigator)
 {
 	ActionFinished.Broadcast();
 }
 
-
+void UAction::SetAdditionalParams_Implementation(const TMap<FName, UObject*>& AdditionalObjects)
+{
+}

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
 #include "Action.generated.h"
 
 /**
@@ -27,14 +26,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bCanBeInterrupted = false;
 
-	UFUNCTION(BlueprintNativeEvent)
-	void StartAction(AActor* Instigator);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bCanInterruptAction = false;
 
 	UFUNCTION(BlueprintNativeEvent)
-	void OnKeyPressed(FKey Key);
-	
-	UFUNCTION(BlueprintNativeEvent)
-    void OnKeyReleased(FKey Key);
+	void StartAction(AActor* Instigator);
 
 	UFUNCTION(BlueprintNativeEvent)
 	void StopAction(AActor* Instigator);
@@ -47,7 +43,10 @@ public:
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnActionFinished ActionFinished;
-
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void SetAdditionalParams(const TMap<FName, UObject*>& AdditionalObjects);
+	
 protected:
 	UPROPERTY(BlueprintReadWrite)
 	AModularCharacter* ModularCharacter;

@@ -99,11 +99,11 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AModularCharacter::Interact);
 	
-	PlayerInputComponent->BindAction<FWeaponUsedDelegate>("LeftMouseClick", IE_Pressed, this, &AModularCharacter::MouseButtonPressed, RightHandWeapon, true); //Right hand is dominant and so is LeftMouseButton
-	PlayerInputComponent->BindAction<FWeaponUsedDelegate>("LeftMouseClick", IE_Released, this, &AModularCharacter::MouseButtonReleased, RightHandWeapon, true);
+	PlayerInputComponent->BindAction("LeftMouseClick", IE_Pressed, this, &AModularCharacter::MouseButtonPressed);
+	PlayerInputComponent->BindAction("LeftMouseClick", IE_Released, this, &AModularCharacter::MouseButtonReleased);
 
-	PlayerInputComponent->BindAction<FWeaponUsedDelegate>("RightMouseClick", IE_Pressed, this, &AModularCharacter::MouseButtonPressed, LeftHandWeapon, false);
-	PlayerInputComponent->BindAction<FWeaponUsedDelegate>("RightMouseClick", IE_Released, this, &AModularCharacter::MouseButtonReleased, LeftHandWeapon, false);
+	PlayerInputComponent->BindAction("RightMouseClick", IE_Pressed, this, &AModularCharacter::MouseButtonPressed);
+	PlayerInputComponent->BindAction("RightMouseClick", IE_Released, this, &AModularCharacter::MouseButtonReleased);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
@@ -187,9 +187,11 @@ AActor* AModularCharacter::CastLineTrace()
 	return nullptr;
 }
 
-void AModularCharacter::MouseButtonPressed(UWeaponComponent* WeaponComponent, bool bIsRightHand)
+void AModularCharacter::MouseButtonPressed(FKey Key)
 {
-	if(bIsRightHand)
+	UWeaponComponent* WeaponComponent = (Key == EKeys::LeftMouseButton) ? RightHandWeapon : LeftHandWeapon;
+	
+	if(Key == EKeys::LeftMouseButton)
 	{
 		OnLeftMouseButtonClicked.Broadcast(IE_Pressed);
 	}
@@ -200,14 +202,25 @@ void AModularCharacter::MouseButtonPressed(UWeaponComponent* WeaponComponent, bo
 	
 	if(WeaponComponent->WeaponItem)
 	{
-		ActionComponent->AddAction(WeaponComponent->WeaponItem->ActionClass);
+		ActionComponent->AddAction(WeaponComponent->WeaponItem->GetActionByKey(Key), {{"WeaponComponent", WeaponComponent}});
 	}
 }
 
-void AModularCharacter::MouseButtonReleased(UWeaponComponent* WeaponComponent, bool bIsRightHand)
+void AModularCharacter::MouseButtonReleased(FKey Key)
 {
+	UWeaponComponent* WeaponComponent = (Key == EKeys::LeftMouseButton) ? RightHandWeapon : LeftHandWeapon;
+
+	if(Key == EKeys::LeftMouseButton)
+	{
+		OnLeftMouseButtonClicked.Broadcast(IE_Released);
+	}
+	else
+	{
+		OnRightMouseButtonClicked.Broadcast(IE_Released);
+	}
+	
 	if (WeaponComponent->IsWeaponEquipped())
- 		WeaponComponent->WeaponItem->MouseButtonReleased(this, bIsRightHand);
+ 		WeaponComponent->WeaponItem->MouseButtonReleased(this, Key == EKeys::LeftMouseButton);
 }
 
 void AModularCharacter::OnActorLoaded()

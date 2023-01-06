@@ -18,16 +18,15 @@ public:
 	UActionComponent();
 
 	UFUNCTION(BlueprintCallable)
-	UAction* AddAction(TSubclassOf<UAction> NewActionClass, bool bInterruptCurrentAction = false);
+	UAction* AddAction(TSubclassOf<UAction> NewActionClass, TMap<FName, UObject*> AdditionalObjects, bool bForceInterrupt = false);
 
 	
-
 protected:
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Transient)
 	UAction* CurrentAction = nullptr;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Transient)
 	UAction* QueuedAction = nullptr;
 
 	UFUNCTION(BlueprintCallable)
