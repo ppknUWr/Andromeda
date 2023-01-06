@@ -20,6 +20,9 @@ public:
 	// Sets default values for this actor's properties
 	AThrowableActor();
 
+	UFUNCTION(BlueprintCallable)
+	void ChangeItem(TSubclassOf<UWeaponItem> IteamClass);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* StaticMesh;
 

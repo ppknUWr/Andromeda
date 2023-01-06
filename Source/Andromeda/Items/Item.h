@@ -70,7 +70,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
 	int BuyPrice;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
 	UInventoryComponent* OwningInventory;
 
 protected:

@@ -16,7 +16,6 @@ class UWeaponComponent;
 class UCoins;
 class AThrowableActor;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnComboWindowEnd);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnButtonClicked, EInputEvent, InputEvent);
 
 UCLASS(Abstract)
@@ -39,9 +38,6 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<USkeletalMeshComponent*> BodyParts;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class UCameraComponent* Camera;
 
@@ -57,6 +53,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Components")
 	UWeaponComponent* RightHandWeapon;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ModularCharacter|Mesh")
+	TMap<EBodyPart, TObjectPtr<USkeletalMesh>> CharacterMeshes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ModularCharacter|Mesh")
+	TObjectPtr<USkeleton> CharacterSkeleton;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, SaveGame)
 	FCharacterStats CurrentsStats;
@@ -103,12 +104,26 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnButtonClicked OnRightMouseButtonClicked;
-
-	UPROPERTY(BlueprintAssignable)
-	FOnComboWindowEnd OnComboWindowEnd;
 	
 	UFUNCTION(BlueprintCallable, Category = "Items")
 	void UseItem(UItem* Item);
+
+	UFUNCTION(BlueprintCallable, Category = "Items")
+	void BuyItem(UItem* Item);
+
+	UFUNCTION(BlueprintCallable, Category = "Items")
+	void SellItem(UItem* Item);
+
+	// Most of the time it's empty, unsless player starts an interaction with trader.
+	//  Didn't had any better ideas to connect the selling of an item.
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UInventoryComponent* TraderInventory;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UCoins* TraderCoins;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool PlayerTrading;
 
 	int32 ComboCounter = 0;
 	
@@ -117,6 +132,9 @@ public:
 	
 	UPROPERTY(BlueprintReadWrite)
 	AThrowableActor* SpawnThrowableActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UUserWidget* InteractionWidgetRef;
 protected:
 
 	void ApplyRagdoll();
@@ -136,6 +154,9 @@ protected:
 	void ZoomOut();
 
 	virtual void OnActorLoaded() override;
+
+	UFUNCTION(BlueprintCallable)
+	void MergeMeshes();
 	
 public:
 	

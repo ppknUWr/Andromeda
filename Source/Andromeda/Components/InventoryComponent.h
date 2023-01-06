@@ -27,6 +27,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool RemoveItem(UItem* Item);
 
+	UFUNCTION(BlueprintCallable)
+	bool ExchangeItem(UItem* Item, UInventoryComponent* otherInventory);
+
 public:
 
 	UPROPERTY(EditDefaultsOnly, Instanced)
