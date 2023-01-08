@@ -40,8 +40,8 @@ void UActionComponent::StartAction()
 {
 	if(CurrentAction)
 	{
-		CurrentAction->StartAction(GetOwner());
 		CurrentAction->ActionFinished.AddDynamic(this, &UActionComponent::ActionStopped);
+		CurrentAction->StartAction(GetOwner());
 	}
 }
 
