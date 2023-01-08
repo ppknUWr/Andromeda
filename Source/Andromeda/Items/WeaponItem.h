@@ -64,10 +64,10 @@ public:
 	TSubclassOf<UAction> GetActionByKey(FKey Key);
 	
 	UFUNCTION(BlueprintNativeEvent)
-	void MouseButtonPressed(AModularCharacter* ModularCharacter, bool bIsRightHand);
+	void ButtonPressed(AModularCharacter* ModularCharacter, FKey PressedKey);
 	
     UFUNCTION(BlueprintNativeEvent)
-    void MouseButtonReleased(AModularCharacter* ModularCharacter, bool bIsRightHand);
+    void ButtonReleased(AModularCharacter* ModularCharacter, FKey ReleasedKey);
 
 	UPROPERTY(BlueprintReadOnly, Category = "Weapon")
 	UWeaponComponent* WeaponHand;

@@ -3,27 +3,12 @@
 
 #include "SidearmsWeaponItem.h"
 #include "Andromeda/Character/ModularCharacter.h"
+#include "Andromeda/Components/ActionComponent.h"
+#include "Andromeda/Components/WeaponComponent.h"
 
-void USidearmsWeaponItem::MouseButtonPressed_Implementation(AModularCharacter* ModularCharacter, bool bIsRightHand)
+void USidearmsWeaponItem::ButtonPressed_Implementation(AModularCharacter* ModularCharacter, FKey PressedKey)
 {
-	AttackWithCombo(ModularCharacter->GetMesh(), 0);
-}
+	Super::ButtonPressed_Implementation(ModularCharacter, PressedKey);
 
-void USidearmsWeaponItem::AttackWithCombo(USkeletalMeshComponent* MeshComponent, int32 ComboIndex) const
-{
-	//copied & modified from ACharacter::PlayAnimMontage -> we want to change sections in current montage, not to play another
-	UAnimInstance * AnimInstance = (MeshComponent)? MeshComponent->GetAnimInstance() : nullptr; 
-	if( AttackMontage && AnimInstance )
-	{
-		if(ComboIndex == 0)
-		{
-			AnimInstance->Montage_Play(AttackMontage, 1);
-		}
-		else
-		{
-			const FName SectionName = AttackMontage->GetSectionName(ComboIndex);
-			
-			AnimInstance->Montage_JumpToSection(SectionName, AttackMontage); 
-		}
-	}
+	ModularCharacter->ActionComponent->AddAction(GetActionByKey(PressedKey), {{"WeaponComponent", WeaponHand}});
 }

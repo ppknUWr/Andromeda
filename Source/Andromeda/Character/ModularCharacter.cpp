@@ -18,6 +18,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "SkeletalMergingLibrary.h"
+#include "Andromeda/Actions/WeaponEquipAction.h"
 
 // Sets default values
 AModularCharacter::AModularCharacter()
@@ -254,10 +255,15 @@ void AModularCharacter::MouseButtonPressed(FKey Key)
 	{
 		OnRightMouseButtonClicked.Broadcast(IE_Pressed);
 	}
+
+	if(!WeaponComponent->IsWeaponEquipped())
+	{
+		ActionComponent->AddAction(UWeaponEquipAction::StaticClass(), {{"WeaponComponent", WeaponComponent}});
+	}
 	
 	if(WeaponComponent->WeaponItem)
 	{
-		ActionComponent->AddAction(WeaponComponent->WeaponItem->GetActionByKey(Key), {{"WeaponComponent", WeaponComponent}});
+		WeaponComponent->WeaponItem->ButtonPressed(this, Key);
 	}
 }
 
@@ -274,8 +280,10 @@ void AModularCharacter::MouseButtonReleased(FKey Key)
 		OnRightMouseButtonClicked.Broadcast(IE_Released);
 	}
 	
-	if (WeaponComponent->IsWeaponEquipped())
- 		WeaponComponent->WeaponItem->MouseButtonReleased(this, Key == EKeys::LeftMouseButton);
+	if (WeaponComponent->WeaponItem)
+	{
+		WeaponComponent->WeaponItem->ButtonReleased(this, Key);
+	}
 }
 
 void AModularCharacter::OnActorLoaded()

@@ -47,10 +47,10 @@ TSubclassOf<UAction> UWeaponItem::GetActionByKey_Implementation(FKey Key)
 	return nullptr;
 }
 
-void UWeaponItem::MouseButtonPressed_Implementation(AModularCharacter* ModularCharacter, bool bIsRightHand)
+void UWeaponItem::ButtonPressed_Implementation(AModularCharacter* ModularCharacter, FKey PressedKey)
 {
 }
 
-void UWeaponItem::MouseButtonReleased_Implementation(AModularCharacter* ModularCharacter, bool bIsRightHand)
+void UWeaponItem::ButtonReleased_Implementation(AModularCharacter* ModularCharacter, FKey ReleasedKey)
 {
 }

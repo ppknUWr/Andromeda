@@ -14,7 +14,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnActionStarted);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnActionInterrupted);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnActionFinished);
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class ANDROMEDA_API UAction : public UObject
 {
 	GENERATED_BODY()
@@ -29,10 +29,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bCanInterruptAction = false;
 
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void StartAction(AActor* Instigator);
 
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void StopAction(AActor* Instigator);
 
 	UPROPERTY(BlueprintAssignable)
