@@ -60,6 +60,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	UAnimMontage* AttackMontage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	TArray<FSkeletalMaterial> SpellMaterials;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	int IndexOfMaterial;
+	
 	UFUNCTION(BlueprintNativeEvent)
 	TSubclassOf<UAction> GetActionByKey(FKey Key);
 	

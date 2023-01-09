@@ -8,8 +8,7 @@ public class Andromeda : ModuleRules
 	{
 		
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-		
 		PrivateDependencyModuleNames.AddRange(new string[] { "SkeletalMerging" });
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "UMG" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "UMG", "Niagara" });
 	}
 }
