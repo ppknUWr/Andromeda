@@ -2,12 +2,12 @@
 
 #pragma once
 
-#include "NiagaraSystem.h"
-#include "NiagaraFunctionLibrary.h"
-
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Spell.generated.h"
+
+class UNiagaraComponent;
+class UNiagaraSystem;
 
 UCLASS()
 class ANDROMEDA_API ASpell : public AActor

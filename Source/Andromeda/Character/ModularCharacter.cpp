@@ -3,6 +3,7 @@
 
 #include "ModularCharacter.h"
 #include "Editor.h"
+#include "NiagaraComponent.h"
 #include "SkeletalMeshMerge.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -151,6 +152,7 @@ void AModularCharacter::Tick(float DeltaSeconds)
 		}
 		LastSeenInteractableObject = CurrentlyViewedObject;
 	}
+
 	
 	Super::Tick(DeltaSeconds);
 }
@@ -246,6 +248,8 @@ AActor* AModularCharacter::CastLineTrace()
 			lookAtPosition = HitResult.Location;
 			lookAtPosition.Z = GetActorLocation().Z+50;
 			Spell->SetActorLocation(lookAtPosition);
+			Spell->SpellComponent->SetWorldLocation(lookAtPosition);
+
 		}
 	}
 	return nullptr;
