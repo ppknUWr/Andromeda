@@ -125,6 +125,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool PlayerTrading;
 
+	UPROPERTY(BlueprintReadWrite)
 	int32 ComboCounter = 0;
 	
 	void MouseButtonPressed(FKey Key);

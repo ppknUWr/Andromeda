@@ -3,6 +3,7 @@
 
 #include "ActionComponent.h"
 #include "Andromeda/Actions/Action.h"
+#include "Andromeda/Actions/WeaponEquipAction.h"
 
 
 UActionComponent::UActionComponent()
@@ -21,7 +22,7 @@ UAction* UActionComponent::AddAction(TSubclassOf<UAction> NewActionClass, TMap<F
 	UAction* NewAction = NewObject<UAction>(GetOwner(), NewActionClass);
 	NewAction->SetAdditionalParams(AdditionalObjects);
 
-	if(CurrentAction == nullptr || NewAction->bCanInterruptAction || bForceInterrupt)
+	if(CurrentAction == nullptr || NewAction->bCanInterruptAction || (bForceInterrupt && !Cast<UWeaponEquipAction>(CurrentAction)))
 	{
 		CurrentAction = NewAction;
 		QueuedAction = nullptr;

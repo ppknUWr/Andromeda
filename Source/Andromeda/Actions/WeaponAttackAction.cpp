@@ -31,7 +31,7 @@ void UWeaponAttackAction::StartAction_Implementation(AActor* Instigator)
 		else
 		{
 			const FName SectionName = AttackMontage->GetSectionName(ModularCharacter->ComboCounter % AttackMontage->CompositeSections.Num());
-		
+
 			AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
 		}
 		
