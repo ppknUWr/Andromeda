@@ -5,19 +5,17 @@
 #include "CoreMinimal.h"
 #include "CharacterStats.h"
 #include "Andromeda/SaveSystem/SaveableInterface.h"
-#include "Blueprint/UserWidget.h"
-#include "Components/Widget.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ModularCharacter.generated.h"
 
 class UItem;
+class UActionComponent;
 class UInventoryComponent;
 class UWeaponComponent;
 class UCoins;
 class AThrowableActor;
 
-DECLARE_DELEGATE_TwoParams(FWeaponUsedDelegate, UWeaponComponent*, bool);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnButtonClicked, EInputEvent, InputEvent);
 
 UCLASS(Abstract)
@@ -46,6 +44,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class USpringArmComponent* SpringArm;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UActionComponent* ActionComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon Components")
 	UWeaponComponent* LeftHandWeapon;
@@ -125,8 +125,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool PlayerTrading;
 
+	UPROPERTY(BlueprintReadWrite)
 	int32 ComboCounter = 0;
-
+	
+	void MouseButtonPressed(FKey Key);
+	void MouseButtonReleased(FKey Key);
+	
 	UPROPERTY(BlueprintReadWrite)
 	AThrowableActor* SpawnThrowableActor;
 
@@ -142,8 +146,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	AActor* LastSeenInteractableObject = nullptr;
 	
-	void MouseButtonPressed(UWeaponComponent* WeaponComponent, bool bIsRightHand);
-	void MouseButtonReleased(UWeaponComponent* WeaponComponent, bool bIsRightHand);
+
 	
 	float WalkSpeed = 600;
 	float SprintSpeed = 1100;
@@ -153,6 +156,7 @@ protected:
 
 	virtual void OnActorLoaded() override;
 
+	UFUNCTION(BlueprintCallable)
 	void MergeMeshes();
 	
 public:

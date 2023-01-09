@@ -2,29 +2,36 @@
 
 
 #include "ModularCharacter.h"
-#include "Editor.h"
-#include "SkeletalMeshMerge.h"
+#include "Andromeda/Components/ActionComponent.h"
+#include "Andromeda/Components/InventoryComponent.h"
+#include "Andromeda/Components/WeaponComponent.h"
+#include "Andromeda/Items/WeaponItem.h"
+#include "Andromeda/Items/Coins.h"
+#include "Andromeda/Interfaces/Interactable.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "Andromeda/Components/InventoryComponent.h"
-#include "Andromeda/Components/WeaponComponent.h"
-#include "Andromeda/Items/WeaponItem.h"
 #include "Andromeda/Items/Item.h"
-#include "Andromeda/Items/Coins.h"
-#include "Andromeda/Interfaces/Interactable.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "SkeletalMergingLibrary.h"
+#include "Andromeda/Actions/WeaponEquipAction.h"
 
 // Sets default values
 AModularCharacter::AModularCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	//// BODY PARTS AND ARMOUR
+	CharacterMeshes.FindOrAdd(EBodyPart::HEAD, nullptr);
+	CharacterMeshes.FindOrAdd(EBodyPart::TORSO, nullptr);
+	CharacterMeshes.FindOrAdd(EBodyPart::ARMS, nullptr);
+	CharacterMeshes.FindOrAdd(EBodyPart::LEGS, nullptr);
+	CharacterMeshes.FindOrAdd(EBodyPart::FEET, nullptr);
 	
 	//// WEAPONS
 	LeftHandWeapon = CreateDefaultSubobject<UWeaponComponent>("LeftHandWeapon");
@@ -45,6 +52,8 @@ AModularCharacter::AModularCharacter()
 	Camera->bUsePawnControlRotation = true;
 	Camera->SetFieldOfView(110.f);
 
+	//// ACTION COMPONENT
+	ActionComponent = CreateDefaultSubobject<UActionComponent>("ActionComponent");
 	
 	//// CHARACTER BODY
 	GetCapsuleComponent()->SetCapsuleRadius(25.f);
@@ -62,15 +71,7 @@ AModularCharacter::AModularCharacter()
 	
 	for(FName WeaponStatName : UWeaponItem::GetWeapons())
 		WeaponsStats.FindOrAdd(WeaponStatName, 0);
-
-	//// ARMOUR
-	CharacterMeshes.FindOrAdd(EBodyPart::HEAD, nullptr);
-	CharacterMeshes.FindOrAdd(EBodyPart::TORSO, nullptr);
-	CharacterMeshes.FindOrAdd(EBodyPart::ARMS, nullptr);
-	CharacterMeshes.FindOrAdd(EBodyPart::LEGS, nullptr);
-	CharacterMeshes.FindOrAdd(EBodyPart::FEET, nullptr);
 	
-	MergeMeshes();
 }
 
 
@@ -98,11 +99,11 @@ void AModularCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AModularCharacter::Interact);
 	
-	PlayerInputComponent->BindAction<FWeaponUsedDelegate>("LeftMouseClick", IE_Pressed, this, &AModularCharacter::MouseButtonPressed, RightHandWeapon, true); //Right hand is dominant and so is LeftMouseButton
-	PlayerInputComponent->BindAction<FWeaponUsedDelegate>("LeftMouseClick", IE_Released, this, &AModularCharacter::MouseButtonReleased, RightHandWeapon, true);
+	PlayerInputComponent->BindAction("LeftMouseClick", IE_Pressed, this, &AModularCharacter::MouseButtonPressed);
+	PlayerInputComponent->BindAction("LeftMouseClick", IE_Released, this, &AModularCharacter::MouseButtonReleased);
 
-	PlayerInputComponent->BindAction<FWeaponUsedDelegate>("RightMouseClick", IE_Pressed, this, &AModularCharacter::MouseButtonPressed, LeftHandWeapon, false);
-	PlayerInputComponent->BindAction<FWeaponUsedDelegate>("RightMouseClick", IE_Released, this, &AModularCharacter::MouseButtonReleased, LeftHandWeapon, false);
+	PlayerInputComponent->BindAction("RightMouseClick", IE_Pressed, this, &AModularCharacter::MouseButtonPressed);
+	PlayerInputComponent->BindAction("RightMouseClick", IE_Released, this, &AModularCharacter::MouseButtonReleased);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
@@ -242,9 +243,11 @@ AActor* AModularCharacter::CastLineTrace()
 	return nullptr;
 }
 
-void AModularCharacter::MouseButtonPressed(UWeaponComponent* WeaponComponent, bool bIsRightHand)
+void AModularCharacter::MouseButtonPressed(FKey Key)
 {
-	if(bIsRightHand)
+	UWeaponComponent* WeaponComponent = (Key == EKeys::LeftMouseButton) ? RightHandWeapon : LeftHandWeapon;
+	
+	if(Key == EKeys::LeftMouseButton)
 	{
 		OnLeftMouseButtonClicked.Broadcast(IE_Pressed);
 	}
@@ -252,22 +255,35 @@ void AModularCharacter::MouseButtonPressed(UWeaponComponent* WeaponComponent, bo
 	{
 		OnRightMouseButtonClicked.Broadcast(IE_Pressed);
 	}
- 	
- 	if(WeaponComponent->IsWeaponEquipped() && CharacterState !=  ECharacterState::ATTACK)
- 	{
- 		WeaponComponent->WeaponItem->MouseButtonPressed(this, bIsRightHand);
- 	}
- 
- 	if(WeaponComponent->IsWeaponAtRest()  && CharacterState !=  ECharacterState::EQUIP)
- 	{
- 		WeaponComponent->PlayEquipAnimation(this);
- 	}
+
+	if(!WeaponComponent->IsWeaponEquipped())
+	{
+		ActionComponent->AddAction(UWeaponEquipAction::StaticClass(), {{"WeaponComponent", WeaponComponent}});
+	}
+	
+	if(WeaponComponent->WeaponItem)
+	{
+		WeaponComponent->WeaponItem->ButtonPressed(this, Key);
+	}
 }
 
-void AModularCharacter::MouseButtonReleased(UWeaponComponent* WeaponComponent, bool bIsRightHand)
+void AModularCharacter::MouseButtonReleased(FKey Key)
 {
-	if (WeaponComponent->IsWeaponEquipped())
- 		WeaponComponent->WeaponItem->MouseButtonReleased(this, bIsRightHand);
+	UWeaponComponent* WeaponComponent = (Key == EKeys::LeftMouseButton) ? RightHandWeapon : LeftHandWeapon;
+
+	if(Key == EKeys::LeftMouseButton)
+	{
+		OnLeftMouseButtonClicked.Broadcast(IE_Released);
+	}
+	else
+	{
+		OnRightMouseButtonClicked.Broadcast(IE_Released);
+	}
+	
+	if (WeaponComponent->WeaponItem)
+	{
+		WeaponComponent->WeaponItem->ButtonReleased(this, Key);
+	}
 }
 
 void AModularCharacter::OnActorLoaded()
