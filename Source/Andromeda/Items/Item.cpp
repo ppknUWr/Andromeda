@@ -17,7 +17,7 @@ UItem::UItem()
 
 void UItem::Use(AModularCharacter* Character)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Blue, "Item used");
+	//GEngine->AddOnScreenDebugMessage(-1, 4.f, FColor::Blue, "Item used");
 }
 
 TArray<FText> UItem::GetActionText() const

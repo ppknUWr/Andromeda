@@ -2,11 +2,10 @@
 
 
 #include "ComboWindowNotifyState.h"
-
-#include "Andromeda/Andromeda.h"
+#include "Andromeda/Actions/WeaponAttackAction.h"
 #include "Andromeda/Character/ModularCharacter.h"
+#include "Andromeda/Components/ActionComponent.h"
 #include "Andromeda/Components/WeaponComponent.h"
-#include "Andromeda/Items/SideArmsWeaponItem.h"
 
 
 void UComboWindowNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
@@ -32,10 +31,8 @@ void UComboWindowNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimS
 
 		if(bComboTriggered)
 		{
-			const USideArmsWeaponItem* WeaponItem = Cast<USideArmsWeaponItem>(ModularCharacter->RightHandWeapon->WeaponItem);
-
 			ModularCharacter->ComboCounter++;
-			WeaponItem->AttackWithCombo(ModularCharacter->GetMesh(), ModularCharacter->ComboCounter);
+			ModularCharacter->ActionComponent->AddAction(UWeaponAttackAction::StaticClass(), {{"WeaponComponent", ModularCharacter->RightHandWeapon}}, true);
 		}
 		
 		if(!bComboTriggered || bIsLastAttack)

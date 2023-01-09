@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Item.h"
-#include "Andromeda/Character/CharacterStats.h"
 #include "WeaponItem.generated.h"
 
 /**
  * 
  */
+class UAction;
 class USkeletalMesh;
-class USkeletalMeshComponent;
+class UWeaponComponent;
 
 UENUM(BlueprintType)
 enum EPreferableHand
@@ -67,10 +67,16 @@ public:
 	int IndexOfMaterial;
 	
 	UFUNCTION(BlueprintNativeEvent)
-	void MouseButtonPressed(AModularCharacter* ModularCharacter, bool bIsRightHand);
+	TSubclassOf<UAction> GetActionByKey(FKey Key);
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void ButtonPressed(AModularCharacter* ModularCharacter, FKey PressedKey);
 	
     UFUNCTION(BlueprintNativeEvent)
-    void MouseButtonReleased(AModularCharacter* ModularCharacter, bool bIsRightHand);
+    void ButtonReleased(AModularCharacter* ModularCharacter, FKey ReleasedKey);
+
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon")
+	UWeaponComponent* WeaponHand;
 private:
 	
 	UFUNCTION()
